@@ -1,6 +1,6 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate, Easing } from 'remotion';
-import { fontFamilies } from '../Root';
+import { Theme, defaultTheme } from '../theme';
 
 interface StatisticSceneProps {
   value: number;
@@ -8,28 +8,31 @@ interface StatisticSceneProps {
   label: string;
   accentColor?: string;
   transparent?: boolean;
+  theme?: Theme;
 }
 
-export const StatisticScene: React.FC<StatisticSceneProps> = ({ 
-  value, 
-  suffix = '', 
+export const StatisticScene: React.FC<StatisticSceneProps> = ({
+  value,
+  suffix = '',
   label,
-  accentColor = '#34D399',
-  transparent = false
+  accentColor,
+  transparent = false,
+  theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const effectiveAccentColor = accentColor ?? theme.colors.success;
 
   const springValue = spring({
     frame: frame - 10,
     fps,
-    config: { damping: 15, mass: 1, stiffness: 50 },
+    config: theme.animation.springSlow,
   });
 
   const labelSpring = spring({
     frame: frame - 30,
     fps,
-    config: { damping: 20, mass: 1, stiffness: 50 },
+    config: theme.animation.springSlow,
   });
 
   // Animate number from 0 to value
@@ -38,41 +41,61 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
   });
 
   return (
-    <AbsoluteFill 
-      style={{ 
-        backgroundColor: transparent ? 'transparent' : '#0A0F1C',
+    <AbsoluteFill
+      style={{
+        backgroundColor: transparent ? 'transparent' : theme.colors.bg,
         position: 'relative',
         overflow: 'hidden'
       }}
     >
-      {/* Centered Content */}
-      <div className="flex flex-col items-center justify-center h-full">
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        gap: 0,
+      }}>
+
         {/* Hero Number */}
-        <div
-          className="text-[140px] font-black leading-none mb-8"
-          style={{
-            opacity: springValue,
-            transform: `scale(${interpolate(springValue, [0, 1], [0.5, 1])})`,
-            fontFamily: fontFamilies.fraunces,
-            color: accentColor,
-          }}
-        >
-          {currentValue % 1 === 0 ? Math.floor(currentValue) : currentValue.toFixed(1)}
+        <div style={{
+          opacity: springValue,
+          transform: `scale(${interpolate(springValue, [0, 1], [0.5, 1])})`,
+          fontFamily: theme.typography.headline,
+          color: effectiveAccentColor,
+          fontSize: theme.typography.sizes.hero,
+          fontWeight: theme.typography.weights.black,
+          lineHeight: 1,
+          letterSpacing: '-0.02em',
+        }}>
+          {Number.isInteger(value) ? Math.round(currentValue) : currentValue.toFixed(1)}
           {suffix}
         </div>
 
-        {/* Label */}
-        <div
-          className="text-[40px] font-normal tracking-wide uppercase"
-          style={{
-            opacity: labelSpring,
-            transform: `translateY(${interpolate(labelSpring, [0, 1], [20, 0])}px)`,
-            fontFamily: fontFamilies.spaceGrotesk,
-            color: '#94A3B8',
-          }}
-        >
+        {/* Thin line dưới */}
+        <div style={{
+          width: interpolate(springValue, [0, 1], [0, 120]),
+          height: 3,
+          backgroundColor: effectiveAccentColor,
+          marginTop: theme.layout.gap.md,
+          marginBottom: theme.layout.gap.md,
+          opacity: 0.5,
+        }} />
+
+        {/* Main label */}
+        <div style={{
+          opacity: labelSpring,
+          transform: `translateY(${interpolate(labelSpring, [0, 1], [20, 0])}px)`,
+          fontFamily: theme.typography.body,
+          color: theme.colors.muted,
+          fontSize: 30,
+          fontWeight: theme.typography.weights.normal,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+        }}>
           {label}
         </div>
+
       </div>
     </AbsoluteFill>
   );

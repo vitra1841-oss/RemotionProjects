@@ -6,10 +6,12 @@ import { ComparisonScene } from './templates/ComparisonScene';
 import { StatisticScene } from './templates/StatisticScene';
 import { OutroScene } from './templates/OutroScene';
 import { BackgroundLayer } from './components';
+import { themes } from './theme';
 import { fontFamilies } from './Root';
 
 export const M5Composition: React.FC = () => {
   const { fps } = useVideoConfig();
+  const theme = themes['minimal-corporate'];
 
   // Timing from audio/macbookM5.json
   // Segment 0: 0.0 - 4.35s
@@ -31,11 +33,11 @@ export const M5Composition: React.FC = () => {
   const s7Frames = Math.round(48.73 * fps) - (s0Frames + s1Frames + s2Frames + s3Frames + s4Frames + s5Frames + s6Frames);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#0A0F1C' }}>
+    <AbsoluteFill style={{ backgroundColor: theme.colors.bg }}>
       <Audio src={staticFile('audio/macbookM5.wav')} />
       
       {/* Persistent Background Layer — nằm trên tất cả scene để giữ continuity */}
-      <BackgroundLayer color="#7DD3FC" showDots={true} />
+      <BackgroundLayer color={theme.colors.primary} showDots={true} theme={theme} />
       
       {/* Segment 0: Hook */}
       <Sequence from={0} durationInFrames={s0Frames}>
@@ -43,8 +45,9 @@ export const M5Composition: React.FC = () => {
           title="Hiệu năng AI *gấp ba lần rưỡi*"
           category="M5 CHIP"
           subtitle="Bước nhảy vọt về xử lý trí tuệ nhân tạo"
-          accentColor="#7DD3FC"
+          accentColor={theme.colors.primary}
           transparent={true}
+          theme={theme}
         />
       </Sequence>
 
@@ -52,8 +55,11 @@ export const M5Composition: React.FC = () => {
       <Sequence from={s0Frames} durationInFrames={s1Frames}>
         <SectionDividerScene 
           title="Apple *M5* Chip"
-          accentColor="#A78BFA"
+          eyebrow="Thế hệ mới"
+          tagline="Kiến trúc chip Apple Silicon tiên tiến nhất"
+          accentColor={theme.colors.accent}
           transparent={true}
+          theme={theme}
         />
       </Sequence>
 
@@ -62,21 +68,26 @@ export const M5Composition: React.FC = () => {
         <TitleScene 
           title="Nhân GPU có *Neural Accelerator*"
           subtitle="Mỗi nhân GPU giờ có bộ xử lý AI riêng"
-          accentColor="#34D399"
+          accentColor={theme.colors.success}
           transparent={true}
+          theme={theme}
         />
       </Sequence>
 
       {/* Segment 3: LLM Comparison */}
       <Sequence from={s0Frames + s1Frames + s2Frames} durationInFrames={s3Frames}>
         <ComparisonScene 
+          centerTitle="*M5* vs M4"
           topTitle="*LLM* trên thiết bị"
           topItems={["Chạy trực tiếp trên máy", "Không cần kết nối Cloud"]}
+          topConclusion="Private & Fast"
           bottomTitle="Nhanh hơn *M4*"
           bottomItems={["Phản hồi tức thì", "Bảo mật dữ liệu tuyệt đối"]}
-          topAccentColor="#7DD3FC"
-          bottomAccentColor="#FBBF24"
+          bottomConclusion="3.5× AI perf"
+          topAccentColor={theme.colors.primary}
+          bottomAccentColor={theme.colors.subAccent4}
           transparent={true}
+          theme={theme}
         />
       </Sequence>
 
@@ -86,21 +97,26 @@ export const M5Composition: React.FC = () => {
           value={150}
           suffix=" GB/s"
           label="Băng thông bộ nhớ"
-          accentColor="#34D399"
+          accentColor={theme.colors.success}
           transparent={true}
+          theme={theme}
         />
       </Sequence>
 
       {/* Segment 5: CPU/GPU Access */}
       <Sequence from={s0Frames + s1Frames + s2Frames + s3Frames + s4Frames} durationInFrames={s5Frames}>
         <ComparisonScene 
+          centerTitle="*CPU* & GPU"
           topTitle="*CPU & GPU*"
           topItems={["Truy cập dữ liệu siêu tốc", "Tối ưu hóa đa nhiệm"]}
+          topConclusion="Zero bottleneck"
           bottomTitle="Giảm *nghẽn*"
           bottomItems={["Xử lý tác vụ nặng mượt mà", "Hiệu suất duy trì ổn định"]}
-          topAccentColor="#A78BFA"
-          bottomAccentColor="#7DD3FC"
+          bottomConclusion="Luôn mượt mà"
+          topAccentColor={theme.colors.accent}
+          bottomAccentColor={theme.colors.primary}
           transparent={true}
+          theme={theme}
         />
       </Sequence>
 
@@ -110,8 +126,9 @@ export const M5Composition: React.FC = () => {
           value={24}
           suffix=" Giờ"
           label="Thời lượng Pin"
-          accentColor="#FBBF24"
+          accentColor={theme.colors.subAccent4}
           transparent={true}
+          theme={theme}
         />
       </Sequence>
 
@@ -120,8 +137,9 @@ export const M5Composition: React.FC = () => {
         <OutroScene 
           title="Kỷ nguyên *AI*"
           subtitle="Apple M5 - Thiết kế cho tương lai"
-          accentColor="#7DD3FC"
+          accentColor={theme.colors.primary}
           transparent={true}
+          theme={theme}
         />
       </Sequence>
 
@@ -131,9 +149,9 @@ export const M5Composition: React.FC = () => {
           position: 'absolute',
           top: 48,
           right: 64,
-          color: '#94A3B8',
+          color: theme.colors.muted,
           fontFamily: fontFamilies.spaceGrotesk,
-          fontSize: 24,
+          fontSize: theme.typography.sizes.caption,
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           zIndex: 10

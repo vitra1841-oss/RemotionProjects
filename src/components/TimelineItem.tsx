@@ -1,6 +1,6 @@
 import React from 'react';
 import { interpolate } from 'remotion';
-import { useSpring, colors } from '../theme';
+import { useSpring } from '../theme';
 import { fontFamilies } from '../Root';
 
 interface TimelineItemProps {
@@ -24,9 +24,9 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({ year, label, delay =
     >
       <div 
         className="w-6 h-6 rounded-full border-4 border-zinc-950 z-10 mb-6" 
-        style={{ backgroundColor: colors.blue[500] }}
+        style={{ backgroundColor: '#3b82f6' }}
       />
-      <span className="text-2xl font-bold mb-2" style={{ color: colors.blue[400], fontFamily: fontFamilies.bricolage }}>{year}</span>
+      <span className="text-2xl font-bold mb-2" style={{ color: '#60a5fa', fontFamily: fontFamilies.bricolage }}>{year}</span>
       <span className="text-xl text-zinc-400 text-center max-w-[150px] font-medium" style={{ fontFamily: fontFamilies.spaceGrotesk }}>
         {label}
       </span>

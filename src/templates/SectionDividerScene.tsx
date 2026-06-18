@@ -2,26 +2,33 @@ import React from 'react';
 import { interpolate, useCurrentFrame, useVideoConfig, spring } from 'remotion';
 import { SceneContainer, AnimatedText } from '../components';
 import { renderHighlightedText } from '../utils/parseHighlight';
-import { fontFamilies } from '../Root';
+import { Theme, defaultTheme } from '../theme';
 
 interface SectionDividerSceneProps {
   title: string;
+  eyebrow?: string;
+  tagline?: string;
   accentColor?: string;
   transparent?: boolean;
+  theme?: Theme;
 }
 
 export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({ 
   title, 
-  accentColor = '#A78BFA',
-  transparent = false
+  eyebrow,
+  tagline,
+  accentColor,
+  transparent = false,
+  theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const effectiveAccentColor = accentColor ?? theme.colors.accent;
 
   const textSpring = spring({
     frame: frame - 10,
     fps,
-    config: { damping: 20, mass: 1, stiffness: 50 },
+    config: theme.animation.springSlow,
   });
 
   const opacity = interpolate(textSpring, [0, 1], [0, 1]);
@@ -31,50 +38,82 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
     <SceneContainer 
       align="center"
       transparent={transparent}
+      theme={theme}
     >
       <div
         style={{
           opacity,
           transform: `scale(${scale})`,
           textAlign: 'center',
-          maxWidth: 900,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
-        <div
-          style={{
-            width: 120,
-            height: 2,
-            backgroundColor: accentColor,
-            margin: '0 auto 40px',
-            opacity: 0.6,
-          }}
-        />
-        
+        {/* Eyebrow label */}
+        {eyebrow && (
+          <div style={{
+            color: effectiveAccentColor,
+            fontFamily: theme.typography.label,
+            fontSize: 26,
+            fontWeight: theme.typography.weights.bold,
+            letterSpacing: '0.25em',
+            textTransform: 'uppercase',
+            marginBottom: theme.layout.gap.xl,
+          }}>
+            {eyebrow}
+          </div>
+        )}
+
+        {/* Top line — dài hơn, dày hơn */}
+        <div style={{
+          width: 200,
+          height: 3,
+          backgroundColor: effectiveAccentColor,
+          marginBottom: theme.layout.gap.xl,
+        }} />
+
+        {/* Main title */}
         <AnimatedText
           delay={15}
           type="zoom"
-          style={{ 
-            fontFamily: fontFamilies.fraunces,
-            color: '#F8FAFC',
-            fontSize: 120,
-            fontWeight: 900,
-            lineHeight: 1.0,
+          style={{
+            fontFamily: theme.typography.headline,
+            color: theme.colors.text,
+            fontSize: 140,
+            fontWeight: theme.typography.weights.black,
+            lineHeight: 0.95,
             textTransform: 'uppercase',
-            letterSpacing: '0.05em',
+            letterSpacing: '0.04em',
           }}
         >
-          {renderHighlightedText(title, accentColor)}
+          {renderHighlightedText(title, effectiveAccentColor)}
         </AnimatedText>
-        
-        <div
-          style={{
-            width: 120,
-            height: 2,
-            backgroundColor: accentColor,
-            margin: '40px auto 0',
-            opacity: 0.6,
-          }}
-        />
+
+        {/* Bottom line */}
+        <div style={{
+          width: 200,
+          height: 3,
+          backgroundColor: effectiveAccentColor,
+          marginTop: theme.layout.gap.xl,
+          marginBottom: tagline ? theme.layout.gap.lg : 0,
+        }} />
+
+        {/* Tagline */}
+        {tagline && (
+          <div style={{
+            color: theme.colors.muted,
+            fontFamily: theme.typography.body,
+            fontSize: 34,
+            fontWeight: theme.typography.weights.normal,
+            letterSpacing: '0.05em',
+            lineHeight: 1.5,
+            maxWidth: 700,
+            opacity: 0.9,
+          }}>
+            {tagline}
+          </div>
+        )}
       </div>
     </SceneContainer>
   );

@@ -1,15 +1,21 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
+import { Theme } from '../theme';
 
 interface BackgroundLayerProps {
   color?: string;
   showDots?: boolean;
+  theme?: Theme;
 }
 
 export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({ 
-  color = '#7DD3FC',
-  showDots = true 
+  color,
+  showDots = true,
+  theme,
 }) => {
+  const effectiveColor = color ?? theme?.colors.primary ?? '#7DD3FC';
+  const effectiveTextColor = theme?.colors.text ?? '#F8FAFC';
+  const dotColor = effectiveTextColor + '33'; // 33 = ~20% alpha hex
   const frame = useCurrentFrame();
 
   const offsetX = Math.sin(frame / 90) * 60;
@@ -37,7 +43,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
           transform: 'translate(-50%, -50%)',
           width: primaryR * 2,
           height: primaryR * 2,
-          background: `radial-gradient(circle, ${color} 0%, transparent 65%)`,
+          background: `radial-gradient(circle, ${effectiveColor} 0%, transparent 65%)`,
           opacity: 0.28,
           filter: 'blur(120px)',
         }}
@@ -50,7 +56,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
           transform: 'translate(-50%, -50%)',
           width: secondaryR * 2,
           height: secondaryR * 2,
-          background: `radial-gradient(circle, ${color} 0%, transparent 65%)`,
+          background: `radial-gradient(circle, ${effectiveColor} 0%, transparent 65%)`,
           opacity: 0.14,
           filter: 'blur(100px)',
         }}
@@ -64,7 +70,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
             style={{
               position: 'absolute',
               inset: 0,
-              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.55) 2px, transparent 2px)',
+              backgroundImage: `radial-gradient(circle, ${dotColor} 2px, transparent 2px)`,
               backgroundSize: '24px 24px',
               WebkitMaskImage: `radial-gradient(circle ${primaryR * 1.1}px at ${primaryX}px ${primaryY}px, black 0%, black 30%, transparent 75%)`,
               maskImage: `radial-gradient(circle ${primaryR * 1.1}px at ${primaryX}px ${primaryY}px, black 0%, black 30%, transparent 75%)`,
@@ -75,7 +81,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
             style={{
               position: 'absolute',
               inset: 0,
-              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.35) 2px, transparent 2px)',
+              backgroundImage: `radial-gradient(circle, ${dotColor} 2px, transparent 2px)`,
               backgroundSize: '24px 24px',
               WebkitMaskImage: `radial-gradient(circle ${secondaryR * 1.1}px at ${secondaryX}px ${secondaryY}px, black 0%, black 20%, transparent 70%)`,
               maskImage: `radial-gradient(circle ${secondaryR * 1.1}px at ${secondaryX}px ${secondaryY}px, black 0%, black 20%, transparent 70%)`,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { SceneContainer, AnimatedText } from '../components';
 import { renderHighlightedText } from '../utils/parseHighlight';
-import { fontFamilies } from '../Root';
+import { Theme, defaultTheme } from '../theme';
 
 interface TitleSceneProps {
   title: string;
@@ -9,33 +9,38 @@ interface TitleSceneProps {
   subtitle?: string;
   accentColor?: string;
   transparent?: boolean;
+  theme?: Theme;
 }
 
 export const TitleScene: React.FC<TitleSceneProps> = ({ 
   title, 
   category, 
   subtitle,
-  accentColor = '#7DD3FC',
-  transparent = false
+  accentColor,
+  transparent = false,
+  theme = defaultTheme,
 }) => {
+  const effectiveAccentColor = accentColor ?? theme.colors.primary;
+
   return (
     <SceneContainer 
       align="left" 
       transparent={transparent}
-      verticalAnchor={0.35}
+      verticalAnchor={theme.layout.verticalAnchorLeft}
+      theme={theme}
     >
       {category && (
         <AnimatedText
           delay={5}
           type="slide"
           style={{ 
-            color: '#94A3B8',
-            fontFamily: fontFamilies.spaceGrotesk,
-            fontSize: 28,
-            fontWeight: 400,
+            color: theme.colors.muted,
+            fontFamily: theme.typography.label,
+            fontSize: theme.typography.sizes.label,
+            fontWeight: theme.typography.weights.bold,
             letterSpacing: '0.15em',
             textTransform: 'uppercase',
-            marginBottom: 24,
+            marginBottom: theme.layout.gap.md,
           }}
         >
           — {category}
@@ -46,15 +51,15 @@ export const TitleScene: React.FC<TitleSceneProps> = ({
         delay={10}
         type="zoom"
         style={{ 
-          fontFamily: fontFamilies.bricolage,
-          color: '#F8FAFC',
-          fontSize: 130,
-          fontWeight: 900,
-          lineHeight: 1.0,
-          marginBottom: 40,
+          fontFamily: theme.typography.headline,
+          color: theme.colors.text,
+          fontSize: theme.typography.sizes.headline,
+          fontWeight: theme.typography.weights.black,
+          lineHeight: theme.layout.lineHeight.tight,
+          marginBottom: theme.layout.gap.xl,
         }}
       >
-        {renderHighlightedText(title, accentColor)}
+        {renderHighlightedText(title, effectiveAccentColor)}
       </AnimatedText>
       
       {subtitle && (
@@ -62,11 +67,11 @@ export const TitleScene: React.FC<TitleSceneProps> = ({
           delay={30}
           type="slide"
           style={{ 
-            color: '#94A3B8',
-            fontFamily: fontFamilies.spaceGrotesk,
+            color: theme.colors.muted,
+            fontFamily: theme.typography.body,
             fontSize: 42,
-            fontWeight: 400,
-            lineHeight: 1.4,
+            fontWeight: theme.typography.weights.normal,
+            lineHeight: theme.layout.lineHeight.normal,
           }}
         >
           {subtitle}

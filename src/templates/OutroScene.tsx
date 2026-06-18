@@ -2,23 +2,26 @@ import React from 'react';
 import { interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 import { SceneContainer, AnimatedText } from '../components';
 import { renderHighlightedText } from '../utils/parseHighlight';
-import { fontFamilies } from '../Root';
+import { Theme, defaultTheme } from '../theme';
 
 interface OutroSceneProps {
   title: string;
   subtitle?: string;
   accentColor?: string;
   transparent?: boolean;
+  theme?: Theme;
 }
 
 export const OutroScene: React.FC<OutroSceneProps> = ({ 
   title, 
   subtitle,
-  accentColor = '#7DD3FC',
-  transparent = false
+  accentColor,
+  transparent = false,
+  theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
+  const effectiveAccentColor = accentColor ?? theme.colors.primary;
   
   // Fade to black at the end
   const exitFade = interpolate(
@@ -32,40 +35,80 @@ export const OutroScene: React.FC<OutroSceneProps> = ({
     <SceneContainer 
       align="center"
       transparent={transparent}
+      theme={theme}
     >
-      {/* Brand Moment - Centered */}
+
+      {/* Main title */}
       <AnimatedText
         delay={10}
         type="zoom"
-        className="text-[110px] font-black leading-none mb-8 text-center"
-        style={{ 
-          fontFamily: fontFamilies.fraunces,
-          color: '#F8FAFC'
+        style={{
+          fontFamily: theme.typography.headline,
+          color: theme.colors.text,
+          fontSize: theme.typography.sizes.headline,
+          fontWeight: theme.typography.weights.black,
+          lineHeight: 0.95,
+          textAlign: 'center',
+          marginBottom: theme.layout.gap.xl,
         }}
       >
-        {renderHighlightedText(title, accentColor)}
+        {renderHighlightedText(title, effectiveAccentColor)}
       </AnimatedText>
 
+      {/* Subtitle */}
       {subtitle && (
         <AnimatedText
           delay={30}
           type="slide"
-          className="text-[36px] font-normal text-center"
-          style={{ 
-            color: '#94A3B8',
-            fontFamily: fontFamilies.spaceGrotesk 
+          style={{
+            color: theme.colors.muted,
+            fontFamily: theme.typography.body,
+            fontSize: 36,
+            fontWeight: theme.typography.weights.normal,
+            textAlign: 'center',
+            marginTop: 15,
+            letterSpacing: '0.05em',
           }}
         >
           {subtitle}
         </AnimatedText>
       )}
 
+      {/* Thin line dưới title */}
+      <AnimatedText delay={20} type="fade" style={{}}>
+        <div style={{
+          width: 90,
+          height: 3,
+          backgroundColor: effectiveAccentColor,
+          marginTop: theme.layout.gap.lg,
+          opacity: 0.6,
+        }} />
+      </AnimatedText>
+
+      {/* CTA nhỏ phía dưới */}
+      <AnimatedText
+        delay={45}
+        type="slide"
+        style={{
+          color: effectiveAccentColor,
+          fontFamily: theme.typography.body,
+          fontSize: theme.typography.sizes.caption,
+          fontWeight: 500,
+          textAlign: 'center',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          marginTop: theme.layout.gap.xl,
+        }}
+      >
+        Like · Follow · Share
+      </AnimatedText>
+
       {/* Exit Overlay */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none"
-        style={{ 
-          backgroundColor: '#0A0F1C',
-          opacity: exitFade 
+        style={{
+          backgroundColor: theme.colors.bg,
+          opacity: exitFade,
         }}
       />
     </SceneContainer>

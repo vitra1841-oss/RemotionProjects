@@ -1,123 +1,167 @@
 import React from 'react';
-import { SceneContainer, AnimatedText, AnimatedList } from '../components';
+import { SceneContainer, AnimatedText } from '../components';
 import { renderHighlightedText } from '../utils/parseHighlight';
-import { fontFamilies } from '../Root';
+import { Theme, defaultTheme } from '../theme';
 
 interface ComparisonSceneProps {
+  centerTitle?: string;
   topTitle: string;
   topItems: string[];
+  topConclusion?: string;
   bottomTitle: string;
   bottomItems: string[];
+  bottomConclusion?: string;
   topAccentColor?: string;
   bottomAccentColor?: string;
   transparent?: boolean;
+  theme?: Theme;
 }
 
 export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
+  centerTitle,
   topTitle,
   topItems,
+  topConclusion,
   bottomTitle,
   bottomItems,
-  topAccentColor = '#7DD3FC',
-  bottomAccentColor = '#34D399',
-  transparent = false
+  bottomConclusion,
+  topAccentColor,
+  bottomAccentColor,
+  transparent = false,
+  theme = defaultTheme,
 }) => {
+  const effectiveTopAccentColor = topAccentColor ?? theme.colors.primary;
+  const effectiveBottomAccentColor = bottomAccentColor ?? theme.colors.success;
   return (
-    <SceneContainer 
+    <SceneContainer
       align="left"
-      transparent={transparent}
-      verticalAnchor={0.12}
       noPadding
+      transparent={transparent}
+      theme={theme}
     >
-      {/* Top Panel */}
-      <div style={{ paddingLeft: 80, paddingRight: 80, paddingTop: 220, paddingBottom: 80 }}>
-        <AnimatedText
-          delay={10}
-          type="slide"
-          style={{ 
-            fontFamily: fontFamilies.bricolage,
-            color: '#F8FAFC',
-            fontSize: 80,
-            fontWeight: 900,
-            lineHeight: 1.1,
-            marginBottom: 48,
-          }}
-        >
-          {renderHighlightedText(topTitle, topAccentColor)}
-        </AnimatedText>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <AnimatedList
-            children={topItems}
-            stagger={5}
-            delay={25}
-            renderItem={(item, index, delay) => (
-              <AnimatedText
-                key={index}
-                delay={delay}
-                type="slide"
-                style={{
-                  color: '#94A3B8',
-                  fontFamily: fontFamilies.spaceGrotesk,
-                  fontSize: 36,
-                  fontWeight: 400,
-                  lineHeight: 1.5,
-                }}
-              >
-                {item as string}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        paddingTop: 400,
+        paddingBottom: 400,
+      }}>
+
+        {/* Center Title */}
+        {centerTitle && (
+          <div style={{ textAlign: 'center', paddingLeft: theme.layout.framePadding, paddingRight: theme.layout.framePadding, marginBottom: theme.layout.gap.lg }}>
+            <AnimatedText delay={5} type="zoom" style={{
+              fontFamily: theme.typography.headline,
+              fontSize: 110,
+              fontWeight: theme.typography.weights.black,
+              lineHeight: 1.05,
+              color: theme.colors.text,
+            }}>
+              {renderHighlightedText(centerTitle, effectiveTopAccentColor)}
+            </AnimatedText>
+            <div style={{ width: 80, height: 5, backgroundColor: effectiveTopAccentColor, margin: '20px auto 0'}} />
+          </div>
+        )}
+
+        {/* 2-Column Body */}
+        <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
+
+          {/* Left Column */}
+          <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: 48, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <AnimatedText delay={10} type="slide" style={{
+              fontFamily: theme.typography.headline,
+              fontSize: theme.typography.sizes.subheadline,
+              fontWeight: theme.typography.weights.black,
+              lineHeight: 1.05,
+              color: theme.colors.text,
+              marginBottom: theme.layout.gap.lg,
+            }}>
+              {renderHighlightedText(topTitle, effectiveTopAccentColor)}
+            </AnimatedText>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md, flex: 1 }}>
+              {topItems.map((item, i) => (
+                <AnimatedText key={i} delay={20 + i * 6} type="slide" style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <span style={{ color: effectiveTopAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
+                  <span style={{
+                    color: theme.colors.muted,
+                    fontFamily: theme.typography.body,
+                    fontSize: theme.typography.sizes.body,
+                    fontWeight: theme.typography.weights.normal,
+                    lineHeight: 1.45,
+                  }}>{item}</span>
+                </AnimatedText>
+              ))}
+            </div>
+
+            {topConclusion && (
+              <AnimatedText delay={40} type="slide" style={{
+                fontFamily: theme.typography.headline,
+                fontSize: 44,
+                fontWeight: theme.typography.weights.black,
+                lineHeight: 1.1,
+                color: effectiveTopAccentColor,
+                marginTop: theme.layout.gap.xl,
+                paddingTop: 32,
+                borderTop: `3px solid ${effectiveTopAccentColor}22`,
+              }}>
+                {topConclusion}
               </AnimatedText>
             )}
-          />
-        </div>
-      </div>
+          </div>
 
-      {/* Thin Divider */}
-      <div
-        style={{
-          height: 2,
-          backgroundColor: '#334155',
-          opacity: 0.5,
-          margin: '0 80px',
-        }}
-      />
+          {/* Vertical Divider */}
+          <div style={{
+            width: 3,
+            backgroundColor: theme.colors.divider,
+            alignSelf: 'stretch',
+          }} />
 
-      {/* Bottom Panel */}
-      <div style={{ paddingLeft: 80, paddingRight: 80, paddingTop: 80, paddingBottom: 120 }}>
-        <AnimatedText
-          delay={20}
-          type="slide"
-          style={{ 
-            fontFamily: fontFamilies.bricolage,
-            color: '#F8FAFC',
-            fontSize: 80,
-            fontWeight: 900,
-            lineHeight: 1.1,
-            marginBottom: 48,
-          }}
-        >
-          {renderHighlightedText(bottomTitle, bottomAccentColor)}
-        </AnimatedText>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <AnimatedList
-            children={bottomItems}
-            stagger={5}
-            delay={35}
-            renderItem={(item, index, delay) => (
-              <AnimatedText
-                key={index}
-                delay={delay}
-                type="slide"
-                style={{
-                  color: '#94A3B8',
-                  fontFamily: fontFamilies.spaceGrotesk,
-                  fontSize: 36,
-                  fontWeight: 400,
-                  lineHeight: 1.5,
-                }}
-              >
-                {item as string}
+          {/* Right Column */}
+          <div style={{ flex: 1, paddingLeft: 48, paddingRight: theme.layout.framePadding, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <AnimatedText delay={18} type="slide" style={{
+              fontFamily: theme.typography.headline,
+              fontSize: theme.typography.sizes.subheadline,
+              fontWeight: theme.typography.weights.black,
+              lineHeight: 1.05,
+              color: theme.colors.text,
+              marginBottom: theme.layout.gap.lg,
+            }}>
+              {renderHighlightedText(bottomTitle, effectiveBottomAccentColor)}
+            </AnimatedText>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md, flex: 1 }}>
+              {bottomItems.map((item, i) => (
+                <AnimatedText key={i} delay={28 + i * 6} type="slide" style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <span style={{ color: effectiveBottomAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
+                  <span style={{
+                    color: theme.colors.muted,
+                    fontFamily: theme.typography.body,
+                    fontSize: theme.typography.sizes.body,
+                    fontWeight: theme.typography.weights.normal,
+                    lineHeight: 1.45,
+                  }}>{item}</span>
+                </AnimatedText>
+              ))}
+            </div>
+
+            {bottomConclusion && (
+              <AnimatedText delay={48} type="slide" style={{
+                fontFamily: theme.typography.headline,
+                fontSize: 44,
+                fontWeight: theme.typography.weights.black,
+                lineHeight: 1.1,
+                color: effectiveBottomAccentColor,
+                marginTop: theme.layout.gap.xl,
+                paddingTop: 32,
+                borderTop: `3px solid ${effectiveBottomAccentColor}22`,
+              }}>
+                {bottomConclusion}
               </AnimatedText>
             )}
-          />
+          </div>
+
         </div>
       </div>
     </SceneContainer>

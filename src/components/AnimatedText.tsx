@@ -1,6 +1,7 @@
 import React from 'react';
 import { interpolate } from 'remotion';
 import { useSpring } from '../theme';
+import { useTheme } from './SceneContainer';
 
 interface AnimatedTextProps {
   children: React.ReactNode;
@@ -15,9 +16,10 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   delay = 0, 
   type = 'fade',
   className = "",
-  style = {}
+  style = {},
 }) => {
-  const springValue = useSpring(delay);
+  const theme = useTheme();
+  const springValue = useSpring(delay, theme.animation.spring);
   
   const opacity = interpolate(springValue, [0, 1], [0, 1]);
   
