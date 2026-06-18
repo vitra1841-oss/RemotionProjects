@@ -4,13 +4,16 @@ import { fontFamilies } from '../fonts';
 export const brightEducation: Theme = {
   name: 'bright-education',
   colors: {
-    bg: '#FAFAF8',
+    bg: '#F8FAFC',
     text: '#1A1A2E',
     muted: '#6B7280',
-    primary: '#6366F1',
-    accent: '#F59E0B',
+
+    primary: '#4338CA',
+    accent: '#FB923C',
     success: '#10B981',
-    divider: '#E5E7EB',
+
+    divider: '#d2c9e4',
+
     subAccent1: '#8B5CF6',
     subAccent2: '#EC4899',
     subAccent3: '#14B8A6',

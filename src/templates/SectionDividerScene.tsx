@@ -13,8 +13,8 @@ interface SectionDividerSceneProps {
   theme?: Theme;
 }
 
-export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({ 
-  title, 
+export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
+  title,
   eyebrow,
   tagline,
   accentColor,
@@ -22,7 +22,7 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
   const effectiveAccentColor = accentColor ?? theme.colors.accent;
 
   const textSpring = spring({
@@ -34,11 +34,20 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
   const opacity = interpolate(textSpring, [0, 1], [0, 1]);
   const scale = interpolate(textSpring, [0, 1], [0.95, 1]);
 
+  // Exit animation
+  const exitOpacity = interpolate(
+    frame,
+    [durationInFrames - 10, durationInFrames - 5],
+    [1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+  );
+
   return (
-    <SceneContainer 
+    <SceneContainer
       align="center"
       transparent={transparent}
       theme={theme}
+      style={{ opacity: exitOpacity }}
     >
       <div
         style={{

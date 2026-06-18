@@ -1,6 +1,7 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { Theme, defaultTheme } from '../theme';
+import { CountUp, Card } from '../components';
 
 interface StatisticSceneProps {
   value: number;
@@ -20,14 +21,8 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
   const effectiveAccentColor = accentColor ?? theme.colors.success;
-
-  const springValue = spring({
-    frame: frame - 10,
-    fps,
-    config: theme.animation.springSlow,
-  });
 
   const labelSpring = spring({
     frame: frame - 30,
@@ -35,10 +30,13 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
     config: theme.animation.springSlow,
   });
 
-  // Animate number from 0 to value
-  const currentValue = interpolate(springValue, [0, 1], [0, value], {
-    easing: Easing.out(Easing.quad),
-  });
+  // Exit animation
+  const exitOpacity = interpolate(
+    frame,
+    [durationInFrames - 10, durationInFrames - 5],
+    [1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+  );
 
   return (
     <AbsoluteFill
@@ -55,32 +53,25 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
         justifyContent: 'center',
         height: '100%',
         gap: 0,
+        opacity: exitOpacity,
       }}>
 
-        {/* Hero Number */}
-        <div style={{
-          opacity: springValue,
-          transform: `scale(${interpolate(springValue, [0, 1], [0.5, 1])})`,
-          fontFamily: theme.typography.headline,
-          color: effectiveAccentColor,
-          fontSize: theme.typography.sizes.hero,
-          fontWeight: theme.typography.weights.black,
-          lineHeight: 1,
-          letterSpacing: '-0.02em',
-        }}>
-          {Number.isInteger(value) ? Math.round(currentValue) : currentValue.toFixed(1)}
-          {suffix}
-        </div>
-
-        {/* Thin line dưới */}
-        <div style={{
-          width: interpolate(springValue, [0, 1], [0, 120]),
-          height: 3,
-          backgroundColor: effectiveAccentColor,
-          marginTop: theme.layout.gap.md,
-          marginBottom: theme.layout.gap.md,
-          opacity: 0.5,
-        }} />
+        {/* Hero Number with CountUp component */}
+        <Card 
+          accentColor={effectiveAccentColor} 
+          glow={true}
+          padding={48}
+          delay={5}
+          theme={theme}
+        >
+          <CountUp
+            value={value}
+            suffix={suffix}
+            accentColor={effectiveAccentColor}
+            delay={10}
+            theme={theme}
+          />
+        </Card>
 
         {/* Main label */}
         <div style={{
@@ -92,6 +83,7 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
           fontWeight: theme.typography.weights.normal,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
+          marginTop: theme.layout.gap.xl,
         }}>
           {label}
         </div>

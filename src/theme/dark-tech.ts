@@ -7,10 +7,13 @@ export const darkTech: Theme = {
     bg: '#0A0F1C',
     text: '#F8FAFC',
     muted: '#94A3B8',
-    primary: '#7DD3FC',
-    accent: '#A78BFA',
+
+    primary: '#67E8F9',
+    accent: '#F59E0B',
     success: '#34D399',
-    divider: '#4d6280',
+
+    divider: '#233046',
+
     subAccent1: '#60A5FA',
     subAccent2: '#F472B6',
     subAccent3: '#34D399',

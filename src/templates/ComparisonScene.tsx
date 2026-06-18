@@ -1,5 +1,6 @@
 import React from 'react';
-import { SceneContainer, AnimatedText } from '../components';
+import { useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { SceneContainer, AnimatedText, Card } from '../components';
 import { renderHighlightedText } from '../utils/parseHighlight';
 import { Theme, defaultTheme } from '../theme';
 
@@ -30,8 +31,34 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
   transparent = false,
   theme = defaultTheme,
 }) => {
+  const frame = useCurrentFrame();
+  const { fps, durationInFrames } = useVideoConfig();
   const effectiveTopAccentColor = topAccentColor ?? theme.colors.primary;
   const effectiveBottomAccentColor = bottomAccentColor ?? theme.colors.success;
+
+  // Animation for line under centerTitle
+  const lineSpring = spring({
+    frame: frame - 15,
+    fps,
+    config: theme.animation.springFast,
+  });
+  const lineWidth = interpolate(lineSpring, [0, 1], [0, 80]);
+
+  // Animation for vertical divider
+  const dividerSpring = spring({
+    frame: frame - 20,
+    fps,
+    config: theme.animation.springFast,
+  });
+  const dividerHeight = interpolate(dividerSpring, [0, 1], [0, 1]);
+
+  // Exit animation for entire scene
+  const exitOpacity = interpolate(
+    frame,
+    [durationInFrames - 10, durationInFrames - 5],
+    [1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+  );
   return (
     <SceneContainer
       align="left"
@@ -46,6 +73,7 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
         height: '100%',
         paddingTop: 400,
         paddingBottom: 400,
+        opacity: exitOpacity,
       }}>
 
         {/* Center Title */}
@@ -60,7 +88,7 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
             }}>
               {renderHighlightedText(centerTitle, effectiveTopAccentColor)}
             </AnimatedText>
-            <div style={{ width: 80, height: 5, backgroundColor: effectiveTopAccentColor, margin: '20px auto 0'}} />
+            <div style={{ width: lineWidth, height: 5, backgroundColor: effectiveTopAccentColor, margin: '20px auto 0'}} />
           </div>
         )}
 
@@ -82,16 +110,18 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md, flex: 1 }}>
               {topItems.map((item, i) => (
-                <AnimatedText key={i} delay={20 + i * 6} type="slide" style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                  <span style={{ color: effectiveTopAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
-                  <span style={{
-                    color: theme.colors.muted,
-                    fontFamily: theme.typography.body,
-                    fontSize: theme.typography.sizes.body,
-                    fontWeight: theme.typography.weights.normal,
-                    lineHeight: 1.45,
-                  }}>{item}</span>
-                </AnimatedText>
+                <Card key={i} accentColor={effectiveTopAccentColor} delay={20 + i * 6} padding={20} theme={theme}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                    <span style={{ color: effectiveTopAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
+                    <span style={{
+                      color: theme.colors.muted,
+                      fontFamily: theme.typography.body,
+                      fontSize: theme.typography.sizes.body,
+                      fontWeight: theme.typography.weights.normal,
+                      lineHeight: 1.45,
+                    }}>{item}</span>
+                  </div>
+                </Card>
               ))}
             </div>
 
@@ -116,6 +146,8 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
             width: 3,
             backgroundColor: theme.colors.divider,
             alignSelf: 'stretch',
+            transform: `scaleY(${dividerHeight})`,
+            transformOrigin: 'top',
           }} />
 
           {/* Right Column */}
@@ -133,16 +165,18 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md, flex: 1 }}>
               {bottomItems.map((item, i) => (
-                <AnimatedText key={i} delay={28 + i * 6} type="slide" style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                  <span style={{ color: effectiveBottomAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
-                  <span style={{
-                    color: theme.colors.muted,
-                    fontFamily: theme.typography.body,
-                    fontSize: theme.typography.sizes.body,
-                    fontWeight: theme.typography.weights.normal,
-                    lineHeight: 1.45,
-                  }}>{item}</span>
-                </AnimatedText>
+                <Card key={i} accentColor={effectiveBottomAccentColor} delay={28 + i * 6} padding={20} theme={theme}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                    <span style={{ color: effectiveBottomAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
+                    <span style={{
+                      color: theme.colors.muted,
+                      fontFamily: theme.typography.body,
+                      fontSize: theme.typography.sizes.body,
+                      fontWeight: theme.typography.weights.normal,
+                      lineHeight: 1.45,
+                    }}>{item}</span>
+                  </div>
+                </Card>
               ))}
             </div>
 

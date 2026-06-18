@@ -44,6 +44,27 @@ env/
 .pytest_cache/
 
 # Project Specific
+# Audio files in root audio/ folder
 audio/*.wav
+audio/*.json
+audio/*.txt
 audio/tmp*
+!audio/build_timeline.py
+
+# Audio files in public/audio/
 public/audio/*.wav
+public/audio/*.json
+
+# Caption files in public/captions/
+public/captions/*.json
+
+# Image and video assets
+public/image/*
+public/video/*
+
+# Output video files
+*.mp4
+*.mov
+*.webm
+
+.aider*

@@ -53,19 +53,30 @@ export function parseHighlight(text: string): HighlightSegment[] {
  * @param text - The text with asterisk-wrapped keywords
  * @param accentColor - The accent color for highlighted words (e.g., "#7DD3FC")
  * @param normalColor - The normal text color (default: "#F8FAFC")
+ * @param scale - The scale value for highlighted words (from animation)
  */
 export function renderHighlightedText(
   text: string,
   accentColor: string,
-  normalColor: string = '#F8FAFC'
+  normalColor: string = '#F8FAFC',
+  scale?: number
 ): React.ReactNode {
   const segments = parseHighlight(text);
 
   return segments.map((segment, index) => {
     if (segment.isHighlighted) {
       return (
-        <span key={index} style={{ color: accentColor }}>
-          {segment.text}
+        <span
+          key={index}
+          style={{
+            display: 'inline-block',
+            transform: `scale(${scale ?? 1})`,
+            transition: 'transform 0.1s ease-out',
+          }}
+        >
+          <span style={{ color: accentColor }}>
+            {segment.text}
+          </span>
         </span>
       );
     }

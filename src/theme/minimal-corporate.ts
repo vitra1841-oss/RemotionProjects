@@ -7,14 +7,17 @@ export const minimalCorporate: Theme = {
     bg: '#111318',
     text: '#E8EAED',
     muted: '#8A9099',
-    primary: '#4FC3F7',
-    accent: '#B0BEC5',
-    success: '#4DB6AC',
+
+    primary: '#5B8DEF',
+    accent: '#94A3B8',
+    success: '#10B981',
+
     divider: '#2A2D35',
+
     subAccent1: '#81D4FA',
     subAccent2: '#90CAF9',
-    subAccent3: '#4DB6AC',
-    subAccent4: '#FFB74D',
+    subAccent3: '#10B981',
+    subAccent4: '#F59E0B',
   },
   typography: {
     headline: fontFamilies.bricolage,

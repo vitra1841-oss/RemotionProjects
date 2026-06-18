@@ -18,8 +18,8 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
   const dotColor = effectiveTextColor + '33'; // 33 = ~20% alpha hex
   const frame = useCurrentFrame();
 
-  const offsetX = Math.sin(frame / 90) * 60;
-  const offsetY = Math.cos(frame / 120) * 80;
+  const offsetX = Math.sin(frame / 45) * 100;
+  const offsetY = Math.cos(frame / 60) * 120;
 
   // Primary blob position — dùng pixel thay vì % để dễ sync với mask
   const FRAME_W = 1080;
@@ -43,9 +43,9 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
           transform: 'translate(-50%, -50%)',
           width: primaryR * 2,
           height: primaryR * 2,
-          background: `radial-gradient(circle, ${effectiveColor} 0%, transparent 65%)`,
-          opacity: 0.28,
-          filter: 'blur(120px)',
+          background: `radial-gradient(circle, ${effectiveColor} 0%, transparent 85%)`,
+          opacity: 0.35,
+          filter: 'blur(90px)',
         }}
       />
       <div
@@ -56,9 +56,9 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
           transform: 'translate(-50%, -50%)',
           width: secondaryR * 2,
           height: secondaryR * 2,
-          background: `radial-gradient(circle, ${effectiveColor} 0%, transparent 65%)`,
-          opacity: 0.14,
-          filter: 'blur(100px)',
+          background: `radial-gradient(circle, ${effectiveColor} 0%, transparent 85%)`,
+          opacity: 0.35,
+          filter: 'blur(80px)',
         }}
       />
 
