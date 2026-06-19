@@ -25,7 +25,7 @@ export const brightEducation: Theme = {
     label: fontFamilies.bigShoulders,
     mono: fontFamilies.spaceMono,
     sizes: {
-      hero: 160,
+      hero: 140,
       headline: 120,
       subheadline: 64,
       body: 34,

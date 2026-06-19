@@ -5,10 +5,19 @@ import "./index.css";
 import { Composition } from "remotion";
 import { M5Composition } from "./compositions/M5Composition";
 import { MCPComposition } from "./compositions/MCPComposition";
+import { VyComposition } from "./compositions/vyComposition";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="Vy-Love"
+        component={VyComposition}
+        durationInFrames={1139}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
       <Composition
         id="M5-Chip"
         component={M5Composition}

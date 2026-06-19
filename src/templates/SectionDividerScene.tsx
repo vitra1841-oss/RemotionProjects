@@ -89,9 +89,9 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
           style={{
             fontFamily: theme.typography.headline,
             color: theme.colors.text,
-            fontSize: 140,
+            fontSize: theme.typography.sizes.hero,
             fontWeight: theme.typography.weights.black,
-            lineHeight: 0.95,
+            lineHeight: 1.05,
             textTransform: 'uppercase',
             letterSpacing: '0.04em',
           }}

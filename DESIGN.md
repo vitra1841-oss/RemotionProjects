@@ -50,9 +50,9 @@ d:\RemotionProjects/
 - Each video has: audio file, context JSON, caption JSON, and composition file
 
 **Audio File Workflow:**
-1. Generate audio file (e.g., `macbookM5.wav`) in `audio/` folder
-2. Generate context JSON (e.g., `macbookM5.json`) in `audio/` folder - used by agent for video generation
-3. Generate caption JSON (e.g., `macbookM5_captions.json`) in `audio/` folder - used by CaptionRenderer
+1. Detect audio file (e.g., `macbookM5.wav`) in `audio/` folder
+2. Detect context JSON (e.g., `macbookM5.json`) in `audio/` folder - used by agent for video generation
+3. Detect caption JSON (e.g., `macbookM5_captions.json`) in `audio/` folder - used by CaptionRenderer (don't need to read this file, just have to move it to the right path)
 4. Move `.wav` file to `public/audio/` for production
 5. Move `_captions.json` file to `public/captions/` for production
 6. Context JSON stays in `audio/` as reference for agent

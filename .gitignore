@@ -68,3 +68,6 @@ public/video/*
 *.webm
 
 .aider*
+
+src/compositions/*.tsx
+src/compositions/*.ts

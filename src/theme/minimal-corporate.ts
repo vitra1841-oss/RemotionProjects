@@ -25,7 +25,7 @@ export const minimalCorporate: Theme = {
     label: fontFamilies.bigShoulders,
     mono: fontFamilies.spaceMono,
     sizes: {
-      hero: 200,
+      hero: 160,
       headline: 110,
       subheadline: 60,
       body: 30,

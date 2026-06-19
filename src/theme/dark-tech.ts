@@ -25,7 +25,7 @@ export const darkTech: Theme = {
     label: fontFamilies.bigShoulders,
     mono: fontFamilies.spaceMono,
     sizes: {
-      hero: 180,
+      hero: 160,
       headline: 130,
       subheadline: 68,
       body: 32,
