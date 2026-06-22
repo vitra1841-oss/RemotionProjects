@@ -39,32 +39,38 @@ export const Card: React.FC<CardProps> = ({
     <div
       style={{
         opacity,
-        transform: `scale(${scale})`,
-        backgroundColor: `${theme.colors.divider}22`,
-        border: `1px solid ${effectiveAccent}33`,
-        borderRadius,
-        padding,
-        position: 'relative',
-        overflow: 'hidden',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
+        borderRadius,
       }}
     >
-      {glow && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: `radial-gradient(circle at center, ${effectiveAccent}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')} 0%, transparent 70%)`,
-            pointerEvents: 'none',
-          }}
-        />
-      )}
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        {children}
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          backgroundColor: `${theme.colors.divider}22`,
+          border: `1px solid ${effectiveAccent}33`,
+          borderRadius,
+          padding,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {glow && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `radial-gradient(circle at center, ${effectiveAccent}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')} 0%, transparent 70%)`,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          {children}
+        </div>
       </div>
     </div>
   );

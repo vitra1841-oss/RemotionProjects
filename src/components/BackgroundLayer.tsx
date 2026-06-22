@@ -1,6 +1,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { Theme } from '../theme';
+import { FRAME_WIDTH, FRAME_HEIGHT } from '../config';
 
 interface BackgroundLayerProps {
   color?: string;
@@ -22,8 +23,8 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
   const offsetY = Math.cos(frame / 60) * 120;
 
   // Primary blob position — dùng pixel thay vì % để dễ sync với mask
-  const FRAME_W = 1080;
-  const FRAME_H = 1920;
+  const FRAME_W = FRAME_WIDTH;
+  const FRAME_H = FRAME_HEIGHT;
   const primaryX = FRAME_W * 0.5 + offsetX;
   const primaryY = FRAME_H * 0.45 + offsetY;
   const primaryR = 450; // radius = width/2 = 900/2

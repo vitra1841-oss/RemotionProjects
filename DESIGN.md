@@ -327,7 +327,7 @@ Background must never compete with text. If background is visible, it should fee
 
 These elements render on top of all scenes, outside any Sequence:
 
-1. **Brand label** — top right, small uppercase text, MUTED color, always visible
+1. **BrandLabel** — top right, small uppercase text, MUTED color, always visible
 2. **CaptionRenderer** — subtitle overlay from JSON file with _captions.json suffix, rendered at bottom of frame
 3. **Progress indicator** — optional, a thin line at very bottom of frame showing video progress
 
@@ -364,8 +364,6 @@ Left-aligned, large headline with keyword highlight, category label above, suppo
   accentColor={theme.colors.primary}
   transparent={true}
   theme={theme}
-  start={2.73}
-  sequenceFrom={0}
 />
 ```
 
@@ -376,11 +374,15 @@ Left-aligned, large headline with keyword highlight, category label above, suppo
 - `accentColor`: Color for highlighted words (default: theme.colors.primary)
 - `transparent`: If true, background transparent to show BackgroundLayer
 - `theme`: Theme object
-- `start`: Time in seconds from video start to begin highlight text animation (optional)
+- `start`: Time in seconds from video start to begin highlight text animation (optional, use sparingly)
 - `sequenceFrom`: Frame where this sequence starts in video (default: 0)
 
 **Highlight Animation:**
 When `start` prop is provided, highlighted words will have scale up/scale down animation at that time. Animation lasts 0.5 seconds.
+
+**Important:** The `start` prop should only be used for scenes that truly need emphasis. Do not include it in every TitleScene — only add it to specific scenes where the highlight animation adds meaningful impact.
+
+**Important:** `category` (eyebrow) is **required** for every TitleScene. Always provide a short, uppercase category that reflects the scene's content. Do not render a TitleScene without category.
 
 ### SectionDividerScene
 Center-aligned, single concept, minimal. Used for section transitions.
@@ -436,6 +438,49 @@ Two stacked panels (top/bottom), no cards, just text blocks with thin divider li
 - `transparent`: Background transparency
 - `theme`: Theme object
 
+### ListScene
+Left-aligned, single-column list with optional title. Use for "steps", "features", "reasons" — content that doesn't need the two-group comparison of ComparisonScene.
+
+```tsx
+<ListScene
+  title="*Why* M5?"
+  items={[
+    { primary: "Neural Engine 3.0", secondary: "40 TOPS AI performance on device" },
+    { primary: "*Unified* memory bandwidth", secondary: "Efficient data flow across all components" },
+    { primary: "Advanced thermal design", secondary: "Sustained performance under load" },
+  ]}
+  variant="dash"
+  accentColor={theme.colors.primary}
+  transparent={true}
+  theme={theme}
+/>
+```
+
+**Props:**
+- `title`: Optional headline (can use *word* for highlight, accent color via `accentColor` prop)
+- `items`: Array of `{ primary: string; secondary: string }` — both required, each item is always 2 lines
+- `variant`: `'numbered'` (01, 02...) or `'dash'` (—) marker style (default: 'dash')
+- `accentColor`: Color for markers, title highlights, and title-list divider bar (default: theme.colors.primary)
+- `primaryAccentColor`: Accent color for keyword highlighting inside item primary text (default: theme.colors.subAccent1)
+- `transparent`: Background transparency
+- `theme`: Theme object
+
+**Item structure:**
+- `primary` — bold text, `theme.typography.body` font, `sizes.subheadline` size, TEXT color. Supports `*word*` syntax for keyword highlighting using `theme.colors.subAccent1` (a different color from title accent for visual hierarchy).
+- `secondary` — normal weight text, `sizes.body` size, MUTED color, **required**. Always provide meaningful secondary text; primary-only items are no longer supported.
+- Marker on the left: numbered (`01`, `02`...) or dash (`—`) in accent color, baseline-aligned with first line of primary text.
+
+**Design notes:**
+- **Hard limit 3–4 items per scene.** If content has more items, split into multiple ListScene instances. Exceeding 4 items causes content to overflow into the 96px padding-bottom zone of the 1080×1920 frame, breaking the layout.
+- `secondary` is **required** for every item. Primary-only items were evaluated and judged too sparse — always provide a secondary line for visual depth.
+- Title and list are separated by a 2px divider bar in `theme.colors.primary` (heavier than 1px item dividers) for clear visual hierarchy.
+- Items separated by count-adjusted gap (`gap.xl` for ≤3 items, `gap.lg` for 4–5, `gap.md` for >5) with 1px divider lines (`theme.colors.divider`) centered evenly between items.
+- Title and items animate with `AnimatedText` type="slide", staggered ~7 frames apart.
+
+**When to use vs ComparisonScene:**
+- Use **ListScene** for homogeneous lists — steps in a process, features of a single product, reasons for a claim.
+- Use **ComparisonScene** when content explicitly compares two sides (before/after, pros/cons, vs).
+
 ### StatisticScene
 Center-aligned, hero number with accent color, label below in MUTED.
 
@@ -453,7 +498,8 @@ Center-aligned, hero number with accent color, label below in MUTED.
 **Props:**
 - `value`: Main number (number)
 - `suffix`: Optional suffix string (e.g., " GB/s")
-- `label`: Label text below number
+- `eyebrow`: Optional pre-title above the number, `theme.colors.text`, bold, slightly larger than body
+- `label`: Label text below number (muted, uppercase)
 - `accentColor`: Color for number
 - `transparent`: Background transparency
 - `theme`: Theme object
@@ -477,6 +523,78 @@ Center-aligned, brand moment.
 - `accentColor`: Color for highlighted words
 - `transparent`: Background transparency
 - `theme`: Theme object
+
+---
+
+### TitleMediaScene
+
+Combined title + media layout. Title content (category, title, subtitle) is left-aligned in the top section. A 2:1 horizontal media frame with corner-bracket framing sits below. Use when you need to show a headline alongside an image/video in the same scene.
+
+```tsx
+<TitleMediaScene
+  title="*Hermes* AI Agent"
+  category="GIỚI THIỆU"
+  subtitle="Làm việc thay bạn, không chỉ trả lời bạn"
+  mediaSrc="images/hermes-demo.png"
+  mediaType="image"
+  accentColor={theme.colors.primary}
+  transparent={true}
+  theme={theme}
+/>
+```
+
+**Props:**
+- `title`: Main headline (can use *word* for highlight)
+- `category`: Optional uppercase label above headline
+- `subtitle`: Optional supporting text below headline
+- `mediaSrc`: staticFile() path to image or video
+- `mediaType`: `'image'` (default) or `'video'`
+- `accentColor`: Color for title highlights and frame brackets (default: theme.colors.primary)
+- `transparent`: Background transparency
+- `theme`: Theme object
+- `videoStartFrom`: Optional trim start for video
+- `videoMuted`: Mute video (default `true`)
+
+**Design notes:**
+- Title content starts at 160px from top (pushed up compared to TitleScene's 38% anchor)
+- Media frame aspect ratio is 2:1 (horizontal), max width 800px
+- Frame brackets use the same corner-bracket style as the original media frames
+
+---
+
+### TimelineScene
+
+Left-aligned vertical timeline with dot markers and a continuous vertical connecting line. Each item appears at an absolute time (`start` in seconds) rather than frame-relative stagger — synced to voice-over or audio cues via the `sequenceFrom` + `start` timing model.
+
+```tsx
+<TimelineScene
+  title="*Quy trình* 4 bước"
+  items={[
+    { primary: "Bước *một*", secondary: "Mô tả chi tiết bước đầu tiên", start: 2 },
+    { primary: "Bước *hai*", secondary: "Mô tả chi tiết bước thứ hai", start: 6 },
+    { primary: "Bước *ba*", secondary: "Mô tả chi tiết bước thứ ba", start: 10 },
+  ]}
+  accentColor={theme.colors.primary}
+  transparent={true}
+  theme={theme}
+/>
+```
+
+**Props:**
+- `title`: Optional headline above the timeline
+- `items`: Array of `{ primary, secondary, start }` — each item activates at its absolute `start` time
+- `titleAccentColor`: Color for headline highlights and dot fill (default: theme.colors.primary)
+- `itemsAccentColor`: Color for item Card accents and item keyword highlights (default: theme.colors.accent)
+- `transparent`: Background transparency
+- `theme`: Theme object
+- `sequenceFrom`: Frame where the enclosing Sequence starts (default `0`) — same pattern as `TitleScene`
+
+**Design notes:**
+- Unlike other templates (which use frame-relative stagger), `TimelineScene` uses **absolute time activation** — each item's entrance spring is seeded from `(currentTime - item.start) * fps` so items stay synced to the voice-over timeline regardless of the scene's `durationInFrames`.
+- All items are always in the DOM (never conditionally rendered) to prevent layout reflow. Before activation, each item is at `opacity: 0` but occupies full layout space.
+- Vertical line uses `theme.colors.divider` and spans from first dot center to last dot center behind the dot column.
+- Maximum 5 items recommended. A `console.warn` is emitted for >5 items.
+- Items are wrapped in the `Card` component (no glow) with a dot marker column alongside.
 
 ---
 
@@ -690,6 +808,17 @@ JSON file must have this format:
 ]
 ```
 
+### BrandLabel
+Persistent brand label rendered at top-right corner across all scenes.
+
+```tsx
+<BrandLabel text="My Channel" theme={theme} />
+```
+
+**Props:**
+- `text`: Label text to display
+- `theme`: Theme object (default: defaultTheme)
+
 ### TitleCard
 Card component for title-style content.
 
@@ -715,6 +844,7 @@ When LLM generates a new scene for specific video segment, it must:
 - Use theme typography values — don't hardcode font sizes or font families
 - Pass theme prop to all components
 - Use transparent={true} to show BackgroundLayer
+- For TitleScene: Only include `start` prop for scenes that truly need emphasis. Do not add it to every TitleScene — reserve it for key moments where the highlight animation adds meaningful impact
 
 ---
 

@@ -52,13 +52,11 @@ export function parseHighlight(text: string): HighlightSegment[] {
  * Render highlighted text as React spans with accent color.
  * @param text - The text with asterisk-wrapped keywords
  * @param accentColor - The accent color for highlighted words (e.g., "#7DD3FC")
- * @param normalColor - The normal text color (default: "#F8FAFC")
  * @param scale - The scale value for highlighted words (from animation)
  */
 export function renderHighlightedText(
   text: string,
   accentColor: string,
-  normalColor: string = '#F8FAFC',
   scale?: number
 ): React.ReactNode {
   const segments = parseHighlight(text);

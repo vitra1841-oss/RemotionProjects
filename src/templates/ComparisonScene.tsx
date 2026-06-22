@@ -93,108 +93,123 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
         )}
 
         {/* 2-Column Body */}
-        <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 
-          {/* Left Column */}
-          <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: 48, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <AnimatedText delay={10} type="slide" style={{
-              fontFamily: theme.typography.headline,
-              fontSize: theme.typography.sizes.subheadline,
-              fontWeight: theme.typography.weights.black,
-              lineHeight: 1.05,
-              color: theme.colors.text,
-              marginBottom: theme.layout.gap.lg,
-            }}>
-              {renderHighlightedText(topTitle, effectiveTopAccentColor)}
-            </AnimatedText>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md, flex: 1 }}>
-              {topItems.map((item, i) => (
-                <Card key={i} accentColor={effectiveTopAccentColor} delay={20 + i * 6} padding={20} theme={theme}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                    <span style={{ color: effectiveTopAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
-                    <span style={{
-                      color: theme.colors.muted,
-                      fontFamily: theme.typography.body,
-                      fontSize: theme.typography.sizes.body,
-                      fontWeight: theme.typography.weights.normal,
-                      lineHeight: 1.45,
-                    }}>{item}</span>
-                  </div>
-                </Card>
-              ))}
-            </div>
-
-            {topConclusion && (
-              <AnimatedText delay={40} type="slide" style={{
+          {/* Titles row — shared height = tallest title */}
+          <div style={{ display: 'flex', flexDirection: 'row', flexShrink: 0 }}>
+            <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: 48 }}>
+              <AnimatedText delay={10} type="slide" style={{
                 fontFamily: theme.typography.headline,
-                fontSize: 44,
+                fontSize: theme.typography.sizes.subheadline,
                 fontWeight: theme.typography.weights.black,
-                lineHeight: 1.1,
-                color: effectiveTopAccentColor,
-                marginTop: theme.layout.gap.xl,
-                paddingTop: 32,
-                borderTop: `3px solid ${effectiveTopAccentColor}22`,
+                lineHeight: 1.05,
+                color: theme.colors.text,
+                marginBottom: theme.layout.gap.lg,
               }}>
-                {topConclusion}
+                {renderHighlightedText(topTitle, effectiveTopAccentColor)}
               </AnimatedText>
-            )}
+            </div>
+            <div style={{ width: 48, flexShrink: 0 }} />
+            <div style={{ flex: 1, paddingLeft: 48, paddingRight: theme.layout.framePadding }}>
+              <AnimatedText delay={18} type="slide" style={{
+                fontFamily: theme.typography.headline,
+                fontSize: theme.typography.sizes.subheadline,
+                fontWeight: theme.typography.weights.black,
+                lineHeight: 1.05,
+                color: theme.colors.text,
+                marginBottom: theme.layout.gap.lg,
+              }}>
+                {renderHighlightedText(bottomTitle, effectiveBottomAccentColor)}
+              </AnimatedText>
+            </div>
           </div>
 
-          {/* Vertical Divider */}
-          <div style={{
-            width: 3,
-            backgroundColor: theme.colors.divider,
-            alignSelf: 'stretch',
-            transform: `scaleY(${dividerHeight})`,
-            transformOrigin: 'top',
-          }} />
-
-          {/* Right Column */}
-          <div style={{ flex: 1, paddingLeft: 48, paddingRight: theme.layout.framePadding, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <AnimatedText delay={18} type="slide" style={{
-              fontFamily: theme.typography.headline,
-              fontSize: theme.typography.sizes.subheadline,
-              fontWeight: theme.typography.weights.black,
-              lineHeight: 1.05,
-              color: theme.colors.text,
-              marginBottom: theme.layout.gap.lg,
-            }}>
-              {renderHighlightedText(bottomTitle, effectiveBottomAccentColor)}
-            </AnimatedText>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md, flex: 1 }}>
-              {bottomItems.map((item, i) => (
-                <Card key={i} accentColor={effectiveBottomAccentColor} delay={28 + i * 6} padding={20} theme={theme}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                    <span style={{ color: effectiveBottomAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
-                    <span style={{
-                      color: theme.colors.muted,
-                      fontFamily: theme.typography.body,
-                      fontSize: theme.typography.sizes.body,
-                      fontWeight: theme.typography.weights.normal,
-                      lineHeight: 1.45,
-                    }}>{item}</span>
-                  </div>
-                </Card>
-              ))}
+          {/* Items row — starts at same Y for both sides */}
+          <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
+            <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: 48 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md }}>
+                {topItems.map((item, i) => (
+                  <Card key={i} accentColor={effectiveTopAccentColor} delay={20 + i * 6} padding={20} theme={theme}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                      <span style={{ color: effectiveTopAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
+                      <span style={{
+                        color: theme.colors.muted,
+                        fontFamily: theme.typography.body,
+                        fontSize: theme.typography.sizes.body,
+                        fontWeight: theme.typography.weights.normal,
+                        lineHeight: 1.45,
+                      }}>{item}</span>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
 
-            {bottomConclusion && (
-              <AnimatedText delay={48} type="slide" style={{
-                fontFamily: theme.typography.headline,
-                fontSize: 44,
-                fontWeight: theme.typography.weights.black,
-                lineHeight: 1.1,
-                color: effectiveBottomAccentColor,
-                marginTop: theme.layout.gap.xl,
-                paddingTop: 32,
-                borderTop: `3px solid ${effectiveBottomAccentColor}22`,
-              }}>
-                {bottomConclusion}
-              </AnimatedText>
-            )}
+            {/* Vertical Divider */}
+            <div style={{
+              width: 3,
+              backgroundColor: theme.colors.divider,
+              alignSelf: 'stretch',
+              transform: `scaleY(${dividerHeight})`,
+              transformOrigin: 'top',
+            }} />
+
+            <div style={{ flex: 1, paddingLeft: 48, paddingRight: theme.layout.framePadding }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md }}>
+                {bottomItems.map((item, i) => (
+                  <Card key={i} accentColor={effectiveBottomAccentColor} delay={28 + i * 6} padding={20} theme={theme}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                      <span style={{ color: effectiveBottomAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
+                      <span style={{
+                        color: theme.colors.muted,
+                        fontFamily: theme.typography.body,
+                        fontSize: theme.typography.sizes.body,
+                        fontWeight: theme.typography.weights.normal,
+                        lineHeight: 1.45,
+                      }}>{item}</span>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
+
+          {/* Conclusions row — shared start Y */}
+          {(topConclusion || bottomConclusion) && (
+            <div style={{ display: 'flex', flexDirection: 'row', flexShrink: 0, marginTop: theme.layout.gap.xl }}>
+              <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: 48 }}>
+                {topConclusion && (
+                  <AnimatedText delay={40} type="slide" style={{
+                    fontFamily: theme.typography.headline,
+                    fontSize: 44,
+                    fontWeight: theme.typography.weights.black,
+                    lineHeight: 1.1,
+                    color: effectiveTopAccentColor,
+                    paddingTop: 32,
+                    borderTop: `3px solid ${effectiveTopAccentColor}22`,
+                  }}>
+                    {topConclusion}
+                  </AnimatedText>
+                )}
+              </div>
+              <div style={{ width: 48 + 3, flexShrink: 0 }} />
+              <div style={{ flex: 1, paddingLeft: 48, paddingRight: theme.layout.framePadding }}>
+                {bottomConclusion && (
+                  <AnimatedText delay={48} type="slide" style={{
+                    fontFamily: theme.typography.headline,
+                    fontSize: 44,
+                    fontWeight: theme.typography.weights.black,
+                    lineHeight: 1.1,
+                    color: effectiveBottomAccentColor,
+                    paddingTop: 32,
+                    borderTop: `3px solid ${effectiveBottomAccentColor}22`,
+                  }}>
+                    {bottomConclusion}
+                  </AnimatedText>
+                )}
+              </div>
+            </div>
+          )}
 
         </div>
       </div>

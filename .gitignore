@@ -59,8 +59,8 @@ public/audio/*.json
 public/captions/*.json
 
 # Image and video assets
-public/image/*
-public/video/*
+public/images/*
+public/videos/*
 
 # Output video files
 *.mp4

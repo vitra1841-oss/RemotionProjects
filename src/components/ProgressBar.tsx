@@ -6,7 +6,6 @@ interface ProgressBarProps {
   startTime?: number; // seconds when progress starts
   endTime?: number; // seconds when progress ends
   value?: number; // 0-100 (fallback if timing not provided)
-  duration?: number; // frames to fill (fallback)
   accentColor?: string;
   height?: number;
   showPercentage?: boolean;
@@ -17,7 +16,6 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   startTime,
   endTime,
   value,
-  duration = 60,
   accentColor,
   height = 8,
   showPercentage = true,

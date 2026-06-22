@@ -8,3 +8,4 @@ export * from './CaptionRenderer';
 export * from './ProgressBar';
 export * from './Card';
 export * from './CountUp';
+export * from './BrandLabel';

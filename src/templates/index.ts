@@ -3,3 +3,6 @@ export * from './SectionDividerScene';
 export * from './ComparisonScene';
 export * from './StatisticScene';
 export * from './OutroScene';
+export * from './ListScene';
+export * from './TimelineScene';
+export * from './TitleMediaScene';

@@ -114,7 +114,6 @@ export const TitleScene: React.FC<TitleSceneProps> = ({
         {renderHighlightedText(
           title,
           effectiveAccentColor,
-          '#F8FAFC',
           highlightScale
         )}
       </div>

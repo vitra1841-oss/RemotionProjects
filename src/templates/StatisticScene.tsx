@@ -6,6 +6,7 @@ import { CountUp, Card } from '../components';
 interface StatisticSceneProps {
   value: number;
   suffix?: string;
+  eyebrow?: string;
   label: string;
   accentColor?: string;
   transparent?: boolean;
@@ -15,6 +16,7 @@ interface StatisticSceneProps {
 export const StatisticScene: React.FC<StatisticSceneProps> = ({
   value,
   suffix = '',
+  eyebrow,
   label,
   accentColor,
   transparent = false,
@@ -56,6 +58,21 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
         opacity: exitOpacity,
       }}>
 
+        {/* Eyebrow above the number */}
+        {eyebrow && (
+          <div style={{
+            opacity: interpolate(spring({ frame: frame - 5, fps, config: theme.animation.spring }), [0, 1], [0, 1]),
+            transform: `translateY(${interpolate(spring({ frame: frame - 5, fps, config: theme.animation.spring }), [0, 1], [15, 0])}px)`,
+            fontFamily: theme.typography.body,
+            color: theme.colors.text,
+            fontSize: theme.typography.sizes.body + 6,
+            fontWeight: theme.typography.weights.bold,
+            marginBottom: theme.layout.gap.lg,
+          }}>
+            {eyebrow}
+          </div>
+        )}
+
         {/* Hero Number with CountUp component */}
         <Card 
           accentColor={effectiveAccentColor} 
@@ -73,7 +90,7 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
           />
         </Card>
 
-        {/* Main label */}
+        {/* Subtitle below the number */}
         <div style={{
           opacity: labelSpring,
           transform: `translateY(${interpolate(labelSpring, [0, 1], [20, 0])}px)`,

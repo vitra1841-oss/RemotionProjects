@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import { AbsoluteFill } from 'remotion';
 import { Theme, defaultTheme } from '../theme';
+import { FRAME_HEIGHT } from '../config';
 
 export const ThemeContext = createContext<Theme>(defaultTheme);
 export const useTheme = () => useContext(ThemeContext);
@@ -28,7 +29,6 @@ export const SceneContainer: React.FC<SceneContainerProps> = ({
   transparent = false,
   theme = defaultTheme,
 }) => {
-  const FRAME_HEIGHT = 1920;
   const HORIZONTAL_PADDING = theme.layout.framePadding;
   const VERTICAL_PADDING_BOTTOM = 96;
   // For left-align: push content down to verticalAnchor position
