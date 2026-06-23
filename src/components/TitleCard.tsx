@@ -18,7 +18,8 @@ export const TitleCard: React.FC<TitleCardProps> = ({
 	subtitle = 'Tại sao phân cấp bộ nhớ quan trọng',
 }) => {
 	const frame = useCurrentFrame();
-	const {fps} = useVideoConfig();
+	const {fps, width} = useVideoConfig();
+	const wScale = width / 1080;
 
 	const titleSpring = spring({
 		frame,
@@ -46,19 +47,23 @@ export const TitleCard: React.FC<TitleCardProps> = ({
 					{title}
 				</h1>
 				<div
-					className="h-1 bg-blue-500 mt-4 mb-6"
 					style={{
-						width: interpolate(titleSpring, [0, 1], [0, 200]),
+						height: Math.round(4 * wScale),
+						width: interpolate(titleSpring, [0, 1], [0, Math.round(200 * wScale)]),
+						backgroundColor: '#3b82f5',
+						marginTop: Math.round(16 * wScale),
+						marginBottom: Math.round(24 * wScale),
 					}}
 				/>
 				<p
-					className="text-4xl text-zinc-400 font-light tracking-wide"
+					className="text-zinc-400 font-light tracking-wide"
 					style={{
 						opacity: subtitleOpacity,
+						fontSize: Math.round(36 * wScale),
 						transform: `translateY(${interpolate(
 							subtitleOpacity,
 							[0, 1],
-							[20, 0]
+							[Math.round(20 * wScale), 0]
 						)}px)`,
 						fontFamily: fontFamilies.spaceGrotesk,
 					}}

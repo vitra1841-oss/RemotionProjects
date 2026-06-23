@@ -1,5 +1,5 @@
 import React from 'react';
-import { interpolate } from 'remotion';
+import { interpolate, useVideoConfig } from 'remotion';
 import { useSpring } from '../theme';
 import { useTheme } from './SceneContainer';
 
@@ -19,13 +19,15 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   style = {},
 }) => {
   const theme = useTheme();
+  const { width } = useVideoConfig();
+  const wScale = width / 1080;
   const springValue = useSpring(delay, theme.animation.spring);
   
   const opacity = interpolate(springValue, [0, 1], [0, 1]);
   
   let transform = '';
   if (type === 'slide') {
-    transform = `translateY(${interpolate(springValue, [0, 1], [20, 0])}px)`;
+    transform = `translateY(${interpolate(springValue, [0, 1], [Math.round(20 * wScale), 0])}px)`;
   } else if (type === 'zoom') {
     transform = `scale(${interpolate(springValue, [0, 1], [0.8, 1])})`;
   }

@@ -29,7 +29,8 @@ export const TitleScene: React.FC<TitleSceneProps> = ({
   sequenceFrom = 0,
 }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveAccentColor = accentColor ?? theme.colors.primary;
 
   // Exit animation
@@ -125,7 +126,7 @@ export const TitleScene: React.FC<TitleSceneProps> = ({
           style={{
             color: theme.colors.muted,
             fontFamily: theme.typography.body,
-            fontSize: 42,
+            fontSize: Math.round(42 * wScale),
             fontWeight: theme.typography.weights.normal,
             lineHeight: theme.layout.lineHeight.normal,
           }}

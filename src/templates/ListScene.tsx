@@ -24,7 +24,8 @@ export const ListScene: React.FC<ListSceneProps> = ({
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveAccentColor = accentColor ?? theme.colors.primary;
 
   if (items.length > 4) {
@@ -65,7 +66,7 @@ export const ListScene: React.FC<ListSceneProps> = ({
       align="left"
       transparent={transparent}
       theme={theme}
-      style={{ paddingTop: 300, opacity: exitOpacity }}
+      style={{ paddingTop: Math.round(300 * wScale), opacity: exitOpacity }}
     >
       {title && (
         <AnimatedText
@@ -88,7 +89,7 @@ export const ListScene: React.FC<ListSceneProps> = ({
         <div style={{ display: 'flex', justifyContent: 'left', width: '50%', marginTop: theme.layout.gap.sm, marginBottom: theme.layout.gap.xl, opacity: titleDividerOpacity, transform: `scaleX(${titleDividerScaleX})`, transformOrigin: 'left' }}>
           <div
             style={{
-              height: 3,
+              height: Math.round(3 * wScale),
               backgroundColor: effectiveAccentColor,
               width: '60%',
             }}
@@ -112,7 +113,7 @@ export const ListScene: React.FC<ListSceneProps> = ({
                     opacity: dividerOpacity,
                     transform: `scaleX(${dividerScaleX})`,
                     transformOrigin: 'left',
-                    height: 1,
+                    height: Math.round(1 * wScale),
                     backgroundColor: theme.colors.divider,
                   }}
                 />
@@ -123,7 +124,7 @@ export const ListScene: React.FC<ListSceneProps> = ({
               type="slide"
               style={{ width: '100%' }}
             >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: Math.round(14 * wScale) }}>
                 <span
                   style={{
                     color: effectiveAccentColor,
@@ -131,7 +132,7 @@ export const ListScene: React.FC<ListSceneProps> = ({
                     fontSize: theme.typography.sizes.body,
                     lineHeight: 1.4,
                     flexShrink: 0,
-                    minWidth: 32,
+                    minWidth: Math.round(32 * wScale),
                     textAlign: 'right',
                     marginTop: markerMarginTop,
                   }}
@@ -161,7 +162,7 @@ export const ListScene: React.FC<ListSceneProps> = ({
                       fontWeight: theme.typography.weights.normal,
                       lineHeight: 1.45,
                       color: theme.colors.muted,
-                      marginTop: 4,
+                      marginTop: Math.round(4 * wScale),
                     }}
                   >
                     {item.secondary}

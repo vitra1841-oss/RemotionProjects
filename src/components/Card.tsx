@@ -16,14 +16,17 @@ export const Card: React.FC<CardProps> = ({
   children,
   accentColor,
   glow = false,
-  padding = 24,
-  borderRadius = 16,
+  padding,
+  borderRadius,
   delay = 0,
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveAccent = accentColor ?? theme.colors.primary;
+  const effectivePadding = padding ?? Math.round(24 * wScale);
+  const effectiveBorderRadius = borderRadius ?? Math.round(16 * wScale);
 
   const springValue = spring({
     frame: frame - delay,
@@ -41,7 +44,7 @@ export const Card: React.FC<CardProps> = ({
         opacity,
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
-        borderRadius,
+        borderRadius: effectiveBorderRadius,
       }}
     >
       <div
@@ -49,8 +52,8 @@ export const Card: React.FC<CardProps> = ({
           transform: `scale(${scale})`,
           backgroundColor: `${theme.colors.divider}22`,
           border: `1px solid ${effectiveAccent}33`,
-          borderRadius,
-          padding,
+          borderRadius: effectiveBorderRadius,
+          padding: effectivePadding,
           position: 'relative',
           overflow: 'hidden',
         }}

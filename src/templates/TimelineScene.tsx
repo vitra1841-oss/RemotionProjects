@@ -3,7 +3,7 @@ import { useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { SceneContainer, AnimatedText, Card } from '../components';
 import { renderHighlightedText } from '../utils/parseHighlight';
 import { Theme, defaultTheme, useSpring } from '../theme';
-import { FRAME_HEIGHT, FRAME_WIDTH } from '../config';
+
 
 interface TimelineSceneItem {
   primary: string;
@@ -31,7 +31,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
   sequenceFrom = 0,
 }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width, height } = useVideoConfig();
   const effectiveTitleAccent = titleAccentColor ?? theme.colors.primary;
   const effectiveItemsAccent = itemsAccentColor ?? theme.colors.accent;
 
@@ -62,7 +62,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
 
   const currentTime = (sequenceFrom + frame) / fps;
 
-  const wScale = FRAME_WIDTH / 1080;
+  const wScale = width / 1080;
   const dotColumnWidth = Math.round(40 * wScale);
   const dotSize = Math.round(40 * wScale);
   const cardPadding = Math.round(28 * wScale);
@@ -109,7 +109,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
       align="left"
       transparent={transparent}
       theme={theme}
-      style={{ paddingTop: title ? Math.round(FRAME_HEIGHT * 0.104) : Math.round(FRAME_HEIGHT * 0.0625), opacity: exitOpacity }}
+      style={{ paddingTop: title ? Math.round(height * 0.104) : Math.round(height * 0.0625), opacity: exitOpacity }}
     >
       {title && (
         <>
@@ -141,7 +141,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
           >
             <div
               style={{
-                height: 3,
+                height: Math.round(3 * wScale),
                 backgroundColor: effectiveTitleAccent,
                 width: '60%',
               }}
@@ -167,9 +167,9 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
                 key={`line-${i}`}
                 style={{
                   position: 'absolute',
-                  left: dotColumnWidth / 2 - 1,
+                  left: dotColumnWidth / 2 - Math.round(1 * wScale),
                   top: segmentTop,
-                  width: 3,
+                  width: Math.round(3 * wScale),
                   height: segmentHeight,
                   backgroundColor: theme.colors.divider,
                   transform: `scaleY(${lineScaleY})`,
@@ -212,7 +212,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
                         width: dotSize,
                         height: dotSize,
                         borderRadius: dotSize / 2,
-                        border: `2px solid ${theme.colors.divider}`,
+                        border: `${Math.round(2 * wScale)}px solid ${theme.colors.divider}`,
                         backgroundColor: theme.colors.bg,
                         position: 'relative',
                       }}
@@ -220,10 +220,10 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
                       <div
                         style={{
                           position: 'absolute',
-                          top: 2,
-                          left: 2,
-                          right: 2,
-                          bottom: 2,
+                          top: Math.round(2 * wScale),
+                          left: Math.round(2 * wScale),
+                          right: Math.round(2 * wScale),
+                          bottom: Math.round(2 * wScale),
                           borderRadius: '50%',
                           backgroundColor: effectiveTitleAccent,
                           opacity: interpolate(itemSpringData[i].springVal, [0, 1], [0, 1]),
@@ -258,7 +258,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
                           fontWeight: theme.typography.weights.normal,
                           lineHeight: 1.45,
                           color: theme.colors.muted,
-                          marginTop: 4,
+                          marginTop: Math.round(4 * wScale),
                         }}
                       >
                         {item.secondary}

@@ -2,13 +2,18 @@ import { fontFamilies } from './fonts';
 export { fontFamilies };
 
 import "./index.css";
-import { Composition } from "remotion";
+import { Composition, type CalculateMetadataFunction } from "remotion";
 import { M5Composition } from "./compositions/M5Composition";
 import { MCPComposition } from "./compositions/MCPComposition";
 import { VyComposition } from "./compositions/VyComposition";
 import { HermesComposition } from "./compositions/hermesComposition";
 import { MathEditorComposition } from "./compositions/matheditorComposition";
 import { FRAME_WIDTH, FRAME_HEIGHT } from "./config";
+
+const resolveDimensions: CalculateMetadataFunction<Record<string, unknown>> = ({ props }) => ({
+  width: (props?.width as number) ?? FRAME_WIDTH,
+  height: (props?.height as number) ?? FRAME_HEIGHT,
+});
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -20,6 +25,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={FRAME_WIDTH}
         height={FRAME_HEIGHT}
+        calculateMetadata={resolveDimensions}
       />
       <Composition
         id="M5-Chip"
@@ -28,6 +34,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={FRAME_WIDTH}
         height={FRAME_HEIGHT}
+        calculateMetadata={resolveDimensions}
       />
       <Composition
         id="MCP-Protocol"
@@ -36,6 +43,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={FRAME_WIDTH}
         height={FRAME_HEIGHT}
+        calculateMetadata={resolveDimensions}
       />
       <Composition
         id="Hermes-Agent"
@@ -44,6 +52,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={FRAME_WIDTH}
         height={FRAME_HEIGHT}
+        calculateMetadata={resolveDimensions}
       />
       <Composition
         id="Math-Editor"
@@ -52,6 +61,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={FRAME_WIDTH}
         height={FRAME_HEIGHT}
+        calculateMetadata={resolveDimensions}
       />
     </>
   );

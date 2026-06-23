@@ -22,7 +22,8 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveAccentColor = accentColor ?? theme.colors.accent;
 
   const textSpring = spring({
@@ -64,7 +65,7 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
           <div style={{
             color: effectiveAccentColor,
             fontFamily: theme.typography.label,
-            fontSize: 26,
+            fontSize: Math.round(26 * wScale),
             fontWeight: theme.typography.weights.bold,
             letterSpacing: '0.25em',
             textTransform: 'uppercase',
@@ -76,8 +77,8 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
 
         {/* Top line — dài hơn, dày hơn */}
         <div style={{
-          width: 200,
-          height: 3,
+          width: Math.round(200 * wScale),
+          height: Math.round(3 * wScale),
           backgroundColor: effectiveAccentColor,
           marginBottom: theme.layout.gap.xl,
         }} />
@@ -101,8 +102,8 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
 
         {/* Bottom line */}
         <div style={{
-          width: 200,
-          height: 3,
+          width: Math.round(200 * wScale),
+          height: Math.round(3 * wScale),
           backgroundColor: effectiveAccentColor,
           marginTop: theme.layout.gap.xl,
           marginBottom: tagline ? theme.layout.gap.lg : 0,
@@ -113,11 +114,11 @@ export const SectionDividerScene: React.FC<SectionDividerSceneProps> = ({
           <div style={{
             color: theme.colors.muted,
             fontFamily: theme.typography.body,
-            fontSize: 34,
+            fontSize: Math.round(34 * wScale),
             fontWeight: theme.typography.weights.normal,
             letterSpacing: '0.05em',
             lineHeight: 1.5,
-            maxWidth: 700,
+            maxWidth: Math.round(700 * wScale),
             opacity: 0.9,
           }}>
             {tagline}

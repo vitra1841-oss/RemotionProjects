@@ -27,13 +27,16 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
   src,
   theme = defaultTheme,
   accentColor,
-  fontSize = 48,
-  bottom = 120,
+  fontSize,
+  bottom,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const wScale = width / 1080;
   const currentTime = frame / fps;
   const effectiveAccent = accentColor ?? theme.colors.primary;
+  const effectiveFontSize = fontSize ?? Math.round(48 * wScale);
+  const effectiveBottom = bottom ?? Math.round(250 * wScale);
 
   const [captions, setCaptions] = React.useState<CaptionChunk[]>([]);
 
@@ -62,7 +65,7 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
       <div
         style={{
           position: 'absolute',
-          bottom,
+          bottom: effectiveBottom,
           left: theme.layout.framePadding,
           right: theme.layout.framePadding,
           textAlign: 'center',
@@ -78,11 +81,11 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
             gap: '0.8em',
             wordSpacing: '0.1em',
             maxWidth: '80%',
-            borderRadius: 16,
-            paddingTop: 18,
-            paddingBottom: 18,
-            paddingLeft: 32,
-            paddingRight: 32,
+            borderRadius: Math.round(16 * wScale),
+            paddingTop: Math.round(18 * wScale),
+            paddingBottom: Math.round(18 * wScale),
+            paddingLeft: Math.round(32 * wScale),
+            paddingRight: Math.round(32 * wScale),
           }}
         >
           {activeChunk.words.map((w, i) => {
@@ -93,7 +96,7 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
                 key={i}
                 style={{
                   fontFamily: theme.typography.body,
-                  fontSize,
+                  fontSize: effectiveFontSize,
                   fontWeight: isActive
                     ? theme.typography.weights.bold
                     : theme.typography.weights.normal,

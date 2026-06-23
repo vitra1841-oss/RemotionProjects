@@ -23,7 +23,8 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveAccentColor = accentColor ?? theme.colors.success;
 
   const labelSpring = spring({
@@ -65,7 +66,7 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
             transform: `translateY(${interpolate(spring({ frame: frame - 5, fps, config: theme.animation.spring }), [0, 1], [15, 0])}px)`,
             fontFamily: theme.typography.body,
             color: theme.colors.text,
-            fontSize: theme.typography.sizes.body + 6,
+            fontSize: Math.round((theme.typography.sizes.body + 6) * wScale),
             fontWeight: theme.typography.weights.bold,
             marginBottom: theme.layout.gap.lg,
           }}>
@@ -77,7 +78,7 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
         <Card 
           accentColor={effectiveAccentColor} 
           glow={true}
-          padding={48}
+          padding={Math.round(48 * wScale)}
           delay={5}
           theme={theme}
         >
@@ -96,7 +97,7 @@ export const StatisticScene: React.FC<StatisticSceneProps> = ({
           transform: `translateY(${interpolate(labelSpring, [0, 1], [20, 0])}px)`,
           fontFamily: theme.typography.body,
           color: theme.colors.muted,
-          fontSize: 30,
+          fontSize: Math.round(30 * wScale),
           fontWeight: theme.typography.weights.normal,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',

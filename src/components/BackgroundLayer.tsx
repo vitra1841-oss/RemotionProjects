@@ -1,7 +1,6 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 import { Theme } from '../theme';
-import { FRAME_WIDTH, FRAME_HEIGHT } from '../config';
 
 interface BackgroundLayerProps {
   color?: string;
@@ -18,20 +17,22 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
   const effectiveTextColor = theme?.colors.text ?? '#F8FAFC';
   const dotColor = effectiveTextColor + '33'; // 33 = ~20% alpha hex
   const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+  const wScale = width / 1080;
 
-  const offsetX = Math.sin(frame / 45) * 100;
-  const offsetY = Math.cos(frame / 60) * 120;
+  const offsetX = Math.sin(frame / 45) * Math.round(100 * wScale);
+  const offsetY = Math.cos(frame / 60) * Math.round(120 * wScale);
 
   // Primary blob position — dùng pixel thay vì % để dễ sync với mask
-  const FRAME_W = FRAME_WIDTH;
-  const FRAME_H = FRAME_HEIGHT;
+  const FRAME_W = width;
+  const FRAME_H = height;
   const primaryX = FRAME_W * 0.5 + offsetX;
   const primaryY = FRAME_H * 0.45 + offsetY;
-  const primaryR = 450; // radius = width/2 = 900/2
+  const primaryR = Math.round(450 * wScale); // radius = width/2 = 900/2
 
   const secondaryX = FRAME_W * 0.25 - offsetX * 0.4;
   const secondaryY = FRAME_H * 0.20 - offsetY * 0.5;
-  const secondaryR = 250;
+  const secondaryR = Math.round(250 * wScale);
 
   return (
     <AbsoluteFill style={{ pointerEvents: 'none', zIndex: 0 }}>
@@ -46,7 +47,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
           height: primaryR * 2,
           background: `radial-gradient(circle, ${effectiveColor} 0%, transparent 85%)`,
           opacity: 0.35,
-          filter: 'blur(90px)',
+          filter: `blur(${Math.round(90 * wScale)}px)`,
         }}
       />
       <div
@@ -59,7 +60,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
           height: secondaryR * 2,
           background: `radial-gradient(circle, ${effectiveColor} 0%, transparent 85%)`,
           opacity: 0.35,
-          filter: 'blur(80px)',
+          filter: `blur(${Math.round(80 * wScale)}px)`,
         }}
       />
 
@@ -71,8 +72,8 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
             style={{
               position: 'absolute',
               inset: 0,
-              backgroundImage: `radial-gradient(circle, ${dotColor} 2px, transparent 2px)`,
-              backgroundSize: '24px 24px',
+              backgroundImage: `radial-gradient(circle, ${dotColor} ${Math.round(2 * wScale)}px, transparent ${Math.round(2 * wScale)}px)`,
+              backgroundSize: `${Math.round(24 * wScale)}px ${Math.round(24 * wScale)}px`,
               WebkitMaskImage: `radial-gradient(circle ${primaryR * 1.1}px at ${primaryX}px ${primaryY}px, black 0%, black 30%, transparent 75%)`,
               maskImage: `radial-gradient(circle ${primaryR * 1.1}px at ${primaryX}px ${primaryY}px, black 0%, black 30%, transparent 75%)`,
             }}
@@ -82,14 +83,28 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
             style={{
               position: 'absolute',
               inset: 0,
-              backgroundImage: `radial-gradient(circle, ${dotColor} 2px, transparent 2px)`,
-              backgroundSize: '24px 24px',
+              backgroundImage: `radial-gradient(circle, ${dotColor} ${Math.round(2 * wScale)}px, transparent ${Math.round(2 * wScale)}px)`,
+              backgroundSize: `${Math.round(24 * wScale)}px ${Math.round(24 * wScale)}px`,
               WebkitMaskImage: `radial-gradient(circle ${secondaryR * 1.1}px at ${secondaryX}px ${secondaryY}px, black 0%, black 20%, transparent 70%)`,
               maskImage: `radial-gradient(circle ${secondaryR * 1.1}px at ${secondaryX}px ${secondaryY}px, black 0%, black 20%, transparent 70%)`,
             }}
           />
         </>
       )}
+
+      {/* Film grain / dither overlay — breaks color banding on gradient blobs */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '200px 200px',
+          opacity: 0.035,
+          mixBlendMode: 'overlay',
+          pointerEvents: 'none',
+        }}
+      />
     </AbsoluteFill>
   );
 };

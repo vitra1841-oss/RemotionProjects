@@ -20,8 +20,11 @@ export const CountUp: React.FC<CountUpProps> = ({
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveAccent = accentColor ?? theme.colors.primary;
+  const effectiveFontSize = fontSize ?? theme.typography.sizes.hero;
+  const scaledFontSize = Math.round(effectiveFontSize * wScale);
 
   const springValue = spring({
     frame: frame - delay,
@@ -43,9 +46,9 @@ export const CountUp: React.FC<CountUpProps> = ({
         transform: `scale(${scale})`,
         fontFamily: theme.typography.headline,
         color: effectiveAccent,
-        fontSize: fontSize || theme.typography.sizes.hero,
+        fontSize: scaledFontSize,
         fontWeight: theme.typography.weights.black,
-        lineHeight: 1,
+        lineHeight: Math.round(1 * wScale),
         letterSpacing: '-0.02em',
       }}
     >

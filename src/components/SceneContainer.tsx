@@ -1,7 +1,6 @@
 import React, { createContext, useContext } from 'react';
-import { AbsoluteFill } from 'remotion';
+import { AbsoluteFill, useVideoConfig } from 'remotion';
 import { Theme, defaultTheme } from '../theme';
-import { FRAME_HEIGHT } from '../config';
 
 export const ThemeContext = createContext<Theme>(defaultTheme);
 export const useTheme = () => useContext(ThemeContext);
@@ -29,12 +28,14 @@ export const SceneContainer: React.FC<SceneContainerProps> = ({
   transparent = false,
   theme = defaultTheme,
 }) => {
+  const { height, width } = useVideoConfig();
+  const wScale = width / 1080;
   const HORIZONTAL_PADDING = theme.layout.framePadding;
-  const VERTICAL_PADDING_BOTTOM = 96;
+  const VERTICAL_PADDING_BOTTOM = Math.round(96 * wScale);
   // For left-align: push content down to verticalAnchor position
   // For center: use flexbox centering instead
   const computedPaddingTop = align === 'left'
-    ? Math.round(FRAME_HEIGHT * verticalAnchor)
+    ? Math.round(height * verticalAnchor)
     : 0;
 
   const containerStyle: React.CSSProperties = noPadding

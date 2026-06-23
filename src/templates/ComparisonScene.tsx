@@ -32,7 +32,8 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveTopAccentColor = topAccentColor ?? theme.colors.primary;
   const effectiveBottomAccentColor = bottomAccentColor ?? theme.colors.success;
 
@@ -42,7 +43,7 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
     fps,
     config: theme.animation.springFast,
   });
-  const lineWidth = interpolate(lineSpring, [0, 1], [0, 80]);
+  const lineWidth = interpolate(lineSpring, [0, 1], [0, Math.round(80 * wScale)]);
 
   // Animation for vertical divider
   const dividerSpring = spring({
@@ -71,8 +72,8 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
         flexDirection: 'column',
         width: '100%',
         height: '100%',
-        paddingTop: 400,
-        paddingBottom: 400,
+        paddingTop: Math.round(400 * wScale),
+        paddingBottom: Math.round(400 * wScale),
         opacity: exitOpacity,
       }}>
 
@@ -81,14 +82,14 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
           <div style={{ textAlign: 'center', paddingLeft: theme.layout.framePadding, paddingRight: theme.layout.framePadding, marginBottom: theme.layout.gap.lg }}>
             <AnimatedText delay={5} type="zoom" style={{
               fontFamily: theme.typography.headline,
-              fontSize: 110,
+              fontSize: Math.round(110 * wScale),
               fontWeight: theme.typography.weights.black,
               lineHeight: 1.05,
               color: theme.colors.text,
             }}>
               {renderHighlightedText(centerTitle, effectiveTopAccentColor)}
             </AnimatedText>
-            <div style={{ width: lineWidth, height: 5, backgroundColor: effectiveTopAccentColor, margin: '20px auto 0'}} />
+            <div style={{ width: lineWidth, height: Math.round(5 * wScale), backgroundColor: effectiveTopAccentColor, margin: `${Math.round(20 * wScale)}px auto 0`}} />
           </div>
         )}
 
@@ -97,7 +98,7 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
 
           {/* Titles row — shared height = tallest title */}
           <div style={{ display: 'flex', flexDirection: 'row', flexShrink: 0 }}>
-            <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: 48 }}>
+            <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: Math.round(48 * wScale) }}>
               <AnimatedText delay={10} type="slide" style={{
                 fontFamily: theme.typography.headline,
                 fontSize: theme.typography.sizes.subheadline,
@@ -109,8 +110,8 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
                 {renderHighlightedText(topTitle, effectiveTopAccentColor)}
               </AnimatedText>
             </div>
-            <div style={{ width: 48, flexShrink: 0 }} />
-            <div style={{ flex: 1, paddingLeft: 48, paddingRight: theme.layout.framePadding }}>
+            <div style={{ width: Math.round(48 * wScale), flexShrink: 0 }} />
+            <div style={{ flex: 1, paddingLeft: Math.round(48 * wScale), paddingRight: theme.layout.framePadding }}>
               <AnimatedText delay={18} type="slide" style={{
                 fontFamily: theme.typography.headline,
                 fontSize: theme.typography.sizes.subheadline,
@@ -126,11 +127,11 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
 
           {/* Items row — starts at same Y for both sides */}
           <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
-            <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: 48 }}>
+            <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: Math.round(48 * wScale) }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md }}>
                 {topItems.map((item, i) => (
-                  <Card key={i} accentColor={effectiveTopAccentColor} delay={20 + i * 6} padding={20} theme={theme}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <Card key={i} accentColor={effectiveTopAccentColor} delay={20 + i * 6} padding={Math.round(20 * wScale)} theme={theme}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: Math.round(14 * wScale) }}>
                       <span style={{ color: effectiveTopAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
                       <span style={{
                         color: theme.colors.muted,
@@ -147,18 +148,18 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
 
             {/* Vertical Divider */}
             <div style={{
-              width: 3,
+              width: Math.round(3 * wScale),
               backgroundColor: theme.colors.divider,
               alignSelf: 'stretch',
               transform: `scaleY(${dividerHeight})`,
               transformOrigin: 'top',
             }} />
 
-            <div style={{ flex: 1, paddingLeft: 48, paddingRight: theme.layout.framePadding }}>
+            <div style={{ flex: 1, paddingLeft: Math.round(48 * wScale), paddingRight: theme.layout.framePadding }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: theme.layout.gap.md }}>
                 {bottomItems.map((item, i) => (
-                  <Card key={i} accentColor={effectiveBottomAccentColor} delay={28 + i * 6} padding={20} theme={theme}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <Card key={i} accentColor={effectiveBottomAccentColor} delay={28 + i * 6} padding={Math.round(20 * wScale)} theme={theme}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: Math.round(14 * wScale) }}>
                       <span style={{ color: effectiveBottomAccentColor, fontSize: theme.typography.sizes.label, lineHeight: 1.4, flexShrink: 0 }}>—</span>
                       <span style={{
                         color: theme.colors.muted,
@@ -177,32 +178,32 @@ export const ComparisonScene: React.FC<ComparisonSceneProps> = ({
           {/* Conclusions row — shared start Y */}
           {(topConclusion || bottomConclusion) && (
             <div style={{ display: 'flex', flexDirection: 'row', flexShrink: 0, marginTop: theme.layout.gap.xl }}>
-              <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: 48 }}>
+              <div style={{ flex: 1, paddingLeft: theme.layout.framePadding, paddingRight: Math.round(48 * wScale) }}>
                 {topConclusion && (
                   <AnimatedText delay={40} type="slide" style={{
                     fontFamily: theme.typography.headline,
-                    fontSize: 44,
+                    fontSize: Math.round(44 * wScale),
                     fontWeight: theme.typography.weights.black,
                     lineHeight: 1.1,
                     color: effectiveTopAccentColor,
-                    paddingTop: 32,
-                    borderTop: `3px solid ${effectiveTopAccentColor}22`,
+                    paddingTop: Math.round(32 * wScale),
+                    borderTop: `${Math.round(3 * wScale)}px solid ${effectiveTopAccentColor}22`,
                   }}>
                     {topConclusion}
                   </AnimatedText>
                 )}
               </div>
-              <div style={{ width: 48 + 3, flexShrink: 0 }} />
-              <div style={{ flex: 1, paddingLeft: 48, paddingRight: theme.layout.framePadding }}>
+              <div style={{ width: Math.round((48 + 3) * wScale), flexShrink: 0 }} />
+              <div style={{ flex: 1, paddingLeft: Math.round(48 * wScale), paddingRight: theme.layout.framePadding }}>
                 {bottomConclusion && (
                   <AnimatedText delay={48} type="slide" style={{
                     fontFamily: theme.typography.headline,
-                    fontSize: 44,
+                    fontSize: Math.round(44 * wScale),
                     fontWeight: theme.typography.weights.black,
                     lineHeight: 1.1,
                     color: effectiveBottomAccentColor,
-                    paddingTop: 32,
-                    borderTop: `3px solid ${effectiveBottomAccentColor}22`,
+                    paddingTop: Math.round(32 * wScale),
+                    borderTop: `${Math.round(3 * wScale)}px solid ${effectiveBottomAccentColor}22`,
                   }}>
                     {bottomConclusion}
                   </AnimatedText>

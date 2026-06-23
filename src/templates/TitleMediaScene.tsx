@@ -37,7 +37,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
   videoMuted = true,
 }) => {
   const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
+  const { durationInFrames, width: frameWidth } = useVideoConfig();
   const effectiveAccentColor = accentColor ?? theme.colors.primary;
   const [mediaError, setMediaError] = useState(false);
 
@@ -48,7 +48,8 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
 
-  const maxMediaWidth = 1000;
+  const wScale = frameWidth / 1080;
+  const maxMediaWidth = Math.round(1000 * wScale);
   const mediaMinHeight = Math.round(maxMediaWidth / 2);
   const mediaMaxHeight = Math.round(maxMediaWidth * 0.8);
 
@@ -61,23 +62,27 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
   const mediaScale = interpolate(mediaSpring, [0, 1], [0.95, 1]);
 
   const cornerBracket = (pos: 'tl' | 'tr' | 'bl' | 'br'): React.CSSProperties => {
+    const s = Math.round(32 * wScale);
+    const off = Math.round(3 * wScale);
+    const bw = Math.round(5 * wScale);
+    const br = Math.round(14 * wScale);
     const base: React.CSSProperties = {
       position: 'absolute',
-      width: 32,
-      height: 32,
+      width: s,
+      height: s,
       borderColor: effectiveAccentColor,
       borderStyle: 'solid',
       borderWidth: 0,
     };
     switch (pos) {
       case 'tl':
-        return { ...base, top: -3, left: -3, borderTopWidth: 5, borderLeftWidth: 5, borderRadius: '14px 0 0 0' };
+        return { ...base, top: -off, left: -off, borderTopWidth: bw, borderLeftWidth: bw, borderRadius: `${br}px 0 0 0` };
       case 'tr':
-        return { ...base, top: -3, right: -3, borderTopWidth: 5, borderRightWidth: 5, borderRadius: '0 14px 0 0' };
+        return { ...base, top: -off, right: -off, borderTopWidth: bw, borderRightWidth: bw, borderRadius: `0 ${br}px 0 0` };
       case 'bl':
-        return { ...base, bottom: -3, left: -3, borderBottomWidth: 5, borderLeftWidth: 5, borderRadius: '0 0 0 14px' };
+        return { ...base, bottom: -off, left: -off, borderBottomWidth: bw, borderLeftWidth: bw, borderRadius: `0 0 0 ${br}px` };
       case 'br':
-        return { ...base, bottom: -3, right: -3, borderBottomWidth: 5, borderRightWidth: 5, borderRadius: '0 0 14px 0' };
+        return { ...base, bottom: -off, right: -off, borderBottomWidth: bw, borderRightWidth: bw, borderRadius: `0 0 ${br}px 0` };
     }
   };
 
@@ -87,7 +92,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
       noPadding
       transparent={transparent}
       theme={theme}
-      style={{ opacity: exitOpacity, padding: '96px 0 0 0' }}
+      style={{ opacity: exitOpacity, padding: `${Math.round(96 * wScale)}px 0 0 0` }}
     >
       {/* Title section */}
       <div
@@ -96,7 +101,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
           flexDirection: 'column',
           alignItems: 'flex-start',
           width: '100%',
-          paddingTop: 180,
+          paddingTop: Math.round(180 * wScale),
           paddingLeft: theme.layout.framePadding,
           paddingRight: theme.layout.framePadding,
         }}
@@ -141,7 +146,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
             style={{
               color: theme.colors.muted,
               fontFamily: theme.typography.body,
-              fontSize: 38,
+              fontSize: Math.round(38 * wScale),
               fontWeight: theme.typography.weights.normal,
               lineHeight: theme.layout.lineHeight.normal,
             }}
@@ -158,7 +163,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           width: '100%',
-          marginTop: 90,
+          marginTop: Math.round(90 * wScale),
         }}
       >
         <div
@@ -170,7 +175,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
             minHeight: mediaMinHeight,
             maxHeight: mediaMaxHeight,
             overflow: 'hidden',
-            borderRadius: 12,
+            borderRadius: Math.round(12 * wScale),
           }}
         >
           {mediaError ? (
@@ -179,7 +184,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
                 width: '100%',
                 height: '100%',
                 backgroundColor: theme.colors.divider,
-                borderRadius: 12,
+                borderRadius: Math.round(12 * wScale),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -189,7 +194,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
                 style={{
                   color: theme.colors.muted,
                   fontFamily: theme.typography.body,
-                  fontSize: 24,
+                  fontSize: Math.round(24 * wScale),
                 }}
               >
                 Media not found
@@ -202,7 +207,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                borderRadius: 12,
+                borderRadius: Math.round(12 * wScale),
               }}
               startFrom={videoStartFrom ?? 0}
               muted={videoMuted}
@@ -214,7 +219,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
                 width: '100%',
                 height: 'auto',
                 display: 'block',
-                borderRadius: 12,
+                borderRadius: Math.round(12 * wScale),
                 objectFit: 'contain',
               }}
               onError={() => setMediaError(true)}
@@ -233,7 +238,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
                 bottom: 0,
                 left: 0,
                 right: 0,
-                height: 2,
+                height: Math.round(2 * wScale),
                 backgroundColor: effectiveAccentColor,
                 opacity: 0.4,
               }}

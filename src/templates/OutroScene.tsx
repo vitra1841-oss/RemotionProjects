@@ -20,7 +20,8 @@ export const OutroScene: React.FC<OutroSceneProps> = ({
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
+  const { durationInFrames, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveAccentColor = accentColor ?? theme.colors.primary;
   
   // Fade to black at the end
@@ -63,10 +64,10 @@ export const OutroScene: React.FC<OutroSceneProps> = ({
           style={{
             color: theme.colors.muted,
             fontFamily: theme.typography.body,
-            fontSize: 36,
+            fontSize: Math.round(36 * wScale),
             fontWeight: theme.typography.weights.normal,
             textAlign: 'center',
-            marginTop: 15,
+            marginTop: Math.round(15 * wScale),
             letterSpacing: '0.05em',
           }}
         >
@@ -77,8 +78,8 @@ export const OutroScene: React.FC<OutroSceneProps> = ({
       {/* Thin line dưới title */}
       <AnimatedText delay={20} type="fade" style={{}}>
         <div style={{
-          width: 90,
-          height: 3,
+          width: Math.round(90 * wScale),
+          height: Math.round(3 * wScale),
           backgroundColor: effectiveAccentColor,
           marginTop: theme.layout.gap.lg,
           opacity: 0.6,

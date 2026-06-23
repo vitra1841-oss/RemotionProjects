@@ -17,13 +17,16 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   endTime,
   value,
   accentColor,
-  height = 8,
   showPercentage = true,
+  height,
+  
   theme = defaultTheme,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const wScale = width / 1080;
   const effectiveAccent = accentColor ?? theme.colors.primary;
+  const effectiveHeight = height ?? Math.round(8 * wScale);
 
   let progress: number;
 
@@ -49,9 +52,9 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     <div
       style={{
         width: '100%',
-        height,
+        height: effectiveHeight,
         backgroundColor: theme.colors.divider,
-        borderRadius: height / 2,
+        borderRadius: effectiveHeight / 2,
         overflow: 'hidden',
         position: 'relative',
       }}
@@ -61,7 +64,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           width: `${progress}%`,
           height: '100%',
           backgroundColor: effectiveAccent,
-          borderRadius: height / 2,
+          borderRadius: effectiveHeight / 2,
           transition: 'width 0.1s linear',
         }}
       />
@@ -69,11 +72,11 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
         <div
           style={{
             position: 'absolute',
-            right: 10,
+            right: Math.round(10 * wScale),
             top: '50%',
             transform: 'translateY(-50%)',
             fontFamily: theme.typography.mono,
-            fontSize: height * 0.8,
+            fontSize: effectiveHeight * 0.8,
             color: theme.colors.text,
             fontWeight: theme.typography.weights.bold,
             textShadow: `0 0 4px ${theme.colors.bg}`,
