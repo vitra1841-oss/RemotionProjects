@@ -71,3 +71,5 @@ public/videos/*
 
 src/compositions/*.tsx
 src/compositions/*.ts
+
+src/Root.tsx
