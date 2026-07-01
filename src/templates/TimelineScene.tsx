@@ -95,7 +95,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
 
   const cumulativeOffsets: number[] = [];
   if (heightsReady) {
-    let offset = 0;
+    let offset = theme.layout.gap.lg;
     for (let i = 0; i < items.length; i++) {
       cumulativeOffsets.push(offset);
       if (i < items.length - 1) {
@@ -109,7 +109,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
       align="left"
       transparent={transparent}
       theme={theme}
-      style={{ paddingTop: title ? Math.round(height * 0.104) : Math.round(height * 0.0625), opacity: exitOpacity }}
+      style={{ paddingTop: title ? Math.round(height * 0.14) : Math.round(height * 0.0625), opacity: exitOpacity }}
     >
       {title && (
         <>
@@ -192,6 +192,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
                   style={{
                     position: 'relative',
                     transform: `translateY(${translateY}px)`,
+                    marginTop: i === 0 ? theme.layout.gap.lg : 0,
                     marginBottom: i < items.length - 1 ? itemGap : 0,
                   }}
                 >

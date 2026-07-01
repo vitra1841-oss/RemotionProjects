@@ -2,6 +2,10 @@ import React from 'react';
 import { useCurrentFrame, useVideoConfig, spring, interpolate, Easing } from 'remotion';
 import { Theme, defaultTheme } from '../theme';
 
+const formatNumber = (n: number): string => {
+  return Math.round(n).toLocaleString('en-US');
+};
+
 interface CountUpProps {
   value: number;
   suffix?: string;
@@ -52,7 +56,7 @@ export const CountUp: React.FC<CountUpProps> = ({
         letterSpacing: '-0.02em',
       }}
     >
-      {Number.isInteger(value) ? Math.round(currentValue) : currentValue.toFixed(1)}
+      {formatNumber(currentValue)}
       {suffix}
     </span>
   );

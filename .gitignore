@@ -45,6 +45,7 @@ env/
 
 # Project Specific
 # Audio files in root audio/ folder
+audio/*/
 audio/*.wav
 audio/*.json
 audio/*.txt

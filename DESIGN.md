@@ -57,6 +57,19 @@ d:\RemotionProjects/
 5. Move `_captions.json` file to `public/captions/` for production
 6. Context JSON stays in `audio/` as reference for agent
 
+**Image & Video Organization:**
+1. Images in `public/images/` are grouped into per-composition subdirectories
+2. Videos in `public/videos/` follow the same pattern
+3. Subdirectory name = composition name in lowercase (e.g., `hermes`, `localai`, `matheditor`, `aitovideov2`)
+4. Example paths:
+   - `public/images/hermes/hermes-intro.jpg`
+   - `public/videos/matheditor/matheditor-demo.mp4`
+5. Media path in composition file must include the subdirectory:
+   ```tsx
+   mediaSrc="images/hermes/hermes-intro.jpg"
+   mediaSrc="videos/aitovideov2/Remotion_logo.mp4"
+   ```
+
 ---
 
 ## TIMING CALCULATION PATTERN
@@ -88,6 +101,9 @@ export const MyComposition: React.FC = () => {
 
 1. **Segment 0 (first):** `Math.round(endTime * fps)` — since startTime is always 0
 2. **Segment N (from segment 1 onwards):** `Math.round(endTime * fps) - sum(s0Frames to s(N-1)Frames)`
+3. **Outro segment (last):** `Math.round((audioEnd + OUTRO_GAP_SEC) * fps) - sum(previousFrames)` — last segment includes 1s gap for exit animation
+
+Define `const OUTRO_GAP_SEC = 1.0;` after theme selection.
 
 This pattern ensures each segment has the correct duration based on timing from audio JSON.
 
@@ -158,7 +174,8 @@ const s2Frames = Math.round(15.15 * fps) - (s0Frames + s1Frames); // (15.15 - 8.
 - [ ] Calculate frames for segment 0: `Math.round(endTime * fps)`
 - [ ] Calculate frames for subsequent segments: `Math.round(endTime * fps) - sum(previousSegments)`
 - [ ] Use cumulative sum for `from` prop in Sequence
-- [ ] Verify total durationInFrames matches total audio duration
+- [ ] Verify total durationInFrames = (audio_end + OUTRO_GAP_SEC) * fps
+- [ ] OutroScene segment must include `OUTRO_GAP_SEC = 1.0` (30 frames at 30fps) so exit fade-to-black plays after audio ends
 - [ ] Add CaptionRenderer if caption JSON file exists
 - [ ] Place audio file in `public/audio/` with appropriate name
 - [ ] Place captions JSON in `public/captions/` with `_captions.json` suffix
@@ -291,6 +308,10 @@ Colors are defined in theme. Don't hardcode color values.
 - TEXT and MUTED for typography hierarchy — TEXT for primary copy, MUTED for secondary/supporting copy.
 - Color is primarily used on keyword highlights, not on backgrounds or borders.
 
+- **FORBIDDEN: Never use `muted` as an accent color.** `muted` is strictly reserved for secondary/supporting text only. Do NOT use `muted` in any accent-related prop: `accentColor`, `topAccentColor`, `bottomAccentColor`, or any highlight element. Doing so makes the scene look washed out and low-contrast. Use `primary`, `accent`, or `subAccent` colors instead.
+
+- **Limit `success` (green) usage.** Green is the most saturated color in every theme and easily overused. Reserve it for rare, genuine success moments (e.g., "done", "completed", "100%"). Prefer `primary`, `accent`, or `subAccent` colors for most highlights. As a rule of thumb: use `success` at most once per video, and never in adjacent scenes.
+
 ---
 
 ## BACKGROUND
@@ -409,6 +430,8 @@ Center-aligned, single concept, minimal. Used for section transitions.
 ### ComparisonScene
 Two stacked panels (top/bottom), no cards, just text blocks with thin divider line between them.
 
+**Rule:** Each side must have **at least 2 items** and both sides must have the **same count** — 2-2, 3-3, or 4-4 only. Never 1-1, 1-2, or 2-3. This ensures visual balance between the two panels.
+
 ```tsx
 <ComparisonScene
   centerTitle="*M5* vs M4"
@@ -505,7 +528,17 @@ Center-aligned, hero number with accent color, label below in MUTED.
 - `theme`: Theme object
 
 ### OutroScene
-Center-aligned, brand moment.
+Center-aligned, brand moment with entrance animations and fade-to-black exit.
+
+**Timing convention:** Always add `const OUTRO_GAP_SEC = 1.0` (30 frames) to the outro segment so the exit fade-to-black animation plays smoothly after the audio narration ends. The last segment's frame calculation should be:
+```tsx
+const sOutroFrames = Math.round((audioEnd + OUTRO_GAP_SEC) * fps) - sum(previousFrames);
+```
+
+**Exit animation timeline** (relative to scene duration):
+- Entrance (title zoom, line, subtitle, CTA): completes by ~frame 65
+- Exit fade-to-black: starts at `durationInFrames - 30`, full black at `durationInFrames - 5`
+- 1s gap ensures ~30 frames for the fade exit after audio ends
 
 ```tsx
 <OutroScene
@@ -595,6 +628,38 @@ Left-aligned vertical timeline with dot markers and a continuous vertical connec
 - Vertical line uses `theme.colors.divider` and spans from first dot center to last dot center behind the dot column.
 - Maximum 5 items recommended. A `console.warn` is emitted for >5 items.
 - Items are wrapped in the `Card` component (no glow) with a dot marker column alongside.
+
+---
+
+### TerminalCodeBlockScene
+
+Simulated terminal window with typewriter animation for commands. Category label and title sit above the terminal. Commands appear one character at a time with a blinking cursor at the end.
+
+```tsx
+<TerminalCodeBlockScene
+  theme={theme}
+  category="BƯỚC 2"
+  title="Cài *uv*"
+  accentColor={theme.colors.accent}
+  commands={["pip install uv"]}
+/>
+```
+
+**Props:**
+- `title`: Optional headline above terminal (can use *word* for highlight)
+- `category`: Optional uppercase label above title
+- `accentColor`: Color for highlighted words, prompt symbols, and terminal cursor
+- `commands`: Array of command strings — each appears on its own line with a `>` prompt prefix
+- `transparent`: Background transparency (default: false)
+- `theme`: Theme object
+
+**Design notes:**
+- Terminal chrome (traffic light dots + "Terminal" title bar) at top
+- Commands type out character-by-character over ~50 frames total
+- Blinking cursor appears after all text is typed
+- Window scales up with spring animation on mount
+- Mono font from `theme.typography.mono` for terminal content
+- Title uses `theme.typography.headline` with scale spring entrance
 
 ---
 

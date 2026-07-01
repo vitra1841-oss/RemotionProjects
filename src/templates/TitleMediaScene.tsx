@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Img,
   OffthreadVideo,
@@ -6,22 +6,23 @@ import {
   staticFile,
   useCurrentFrame,
   useVideoConfig,
-} from 'remotion';
-import { SceneContainer, AnimatedText } from '../components';
-import { renderHighlightedText } from '../utils/parseHighlight';
-import { Theme, defaultTheme, useSpring } from '../theme';
+} from "remotion";
+import { SceneContainer, AnimatedText } from "../components";
+import { renderHighlightedText } from "../utils/parseHighlight";
+import { Theme, defaultTheme, useSpring } from "../theme";
 
 interface TitleMediaSceneProps {
   title: string;
   category?: string;
   subtitle?: string;
   mediaSrc: string;
-  mediaType?: 'image' | 'video';
+  mediaType?: "image" | "video";
   accentColor?: string;
   transparent?: boolean;
   theme?: Theme;
   videoStartFrom?: number;
   videoMuted?: boolean;
+  mediaWidth?: number;
 }
 
 export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
@@ -29,12 +30,13 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
   category,
   subtitle,
   mediaSrc,
-  mediaType = 'image',
+  mediaType = "image",
   accentColor,
   transparent = false,
   theme = defaultTheme,
   videoStartFrom,
   videoMuted = true,
+  mediaWidth = 1000,
 }) => {
   const frame = useCurrentFrame();
   const { durationInFrames, width: frameWidth } = useVideoConfig();
@@ -45,44 +47,75 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
     frame,
     [durationInFrames - 10, durationInFrames - 5],
     [1, 0],
-    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
   const wScale = frameWidth / 1080;
-  const maxMediaWidth = Math.round(1000 * wScale);
-  const mediaMinHeight = Math.round(maxMediaWidth / 2);
-  const mediaMaxHeight = Math.round(maxMediaWidth * 0.8);
+  const clampedWidth = Math.min(1300, Math.max(800, mediaWidth));
+  const maxMediaWidth = Math.round(clampedWidth * wScale);
+  const mediaMinHeight = Math.round(maxMediaWidth / 3);
+  const mediaMaxHeight = Math.round(maxMediaWidth);
 
-  const titleSpring = useSpring(8, theme.animation.spring);
+  const mediaSpring = useSpring(5, theme.animation.spring);
+  const mediaOpacity = interpolate(mediaSpring, [0, 1], [0, 1]);
+  const mediaScale = interpolate(mediaSpring, [0, 1], [0.8, 1]);
+
+  const titleSpring = useSpring(13, theme.animation.spring);
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
   const titleScale = interpolate(titleSpring, [0, 1], [0.85, 1]);
 
-  const mediaSpring = useSpring(18, theme.animation.springSlow);
-  const mediaOpacity = interpolate(mediaSpring, [0, 1], [0, 1]);
-  const mediaScale = interpolate(mediaSpring, [0, 1], [0.95, 1]);
-
-  const cornerBracket = (pos: 'tl' | 'tr' | 'bl' | 'br'): React.CSSProperties => {
+  const cornerBracket = (
+    pos: "tl" | "tr" | "bl" | "br",
+  ): React.CSSProperties => {
     const s = Math.round(32 * wScale);
     const off = Math.round(3 * wScale);
     const bw = Math.round(5 * wScale);
     const br = Math.round(14 * wScale);
     const base: React.CSSProperties = {
-      position: 'absolute',
+      position: "absolute",
       width: s,
       height: s,
       borderColor: effectiveAccentColor,
-      borderStyle: 'solid',
+      borderStyle: "solid",
       borderWidth: 0,
     };
     switch (pos) {
-      case 'tl':
-        return { ...base, top: -off, left: -off, borderTopWidth: bw, borderLeftWidth: bw, borderRadius: `${br}px 0 0 0` };
-      case 'tr':
-        return { ...base, top: -off, right: -off, borderTopWidth: bw, borderRightWidth: bw, borderRadius: `0 ${br}px 0 0` };
-      case 'bl':
-        return { ...base, bottom: -off, left: -off, borderBottomWidth: bw, borderLeftWidth: bw, borderRadius: `0 0 0 ${br}px` };
-      case 'br':
-        return { ...base, bottom: -off, right: -off, borderBottomWidth: bw, borderRightWidth: bw, borderRadius: `0 0 ${br}px 0` };
+      case "tl":
+        return {
+          ...base,
+          top: -off,
+          left: -off,
+          borderTopWidth: bw,
+          borderLeftWidth: bw,
+          borderRadius: `${br}px 0 0 0`,
+        };
+      case "tr":
+        return {
+          ...base,
+          top: -off,
+          right: -off,
+          borderTopWidth: bw,
+          borderRightWidth: bw,
+          borderRadius: `0 ${br}px 0 0`,
+        };
+      case "bl":
+        return {
+          ...base,
+          bottom: -off,
+          left: -off,
+          borderBottomWidth: bw,
+          borderLeftWidth: bw,
+          borderRadius: `0 0 0 ${br}px`,
+        };
+      case "br":
+        return {
+          ...base,
+          bottom: -off,
+          right: -off,
+          borderBottomWidth: bw,
+          borderRightWidth: bw,
+          borderRadius: `0 0 ${br}px 0`,
+        };
     }
   };
 
@@ -92,15 +125,18 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
       noPadding
       transparent={transparent}
       theme={theme}
-      style={{ opacity: exitOpacity, padding: `${Math.round(96 * wScale)}px 0 0 0` }}
+      style={{
+        opacity: exitOpacity,
+        padding: `${Math.round(96 * wScale)}px 0 0 0`,
+      }}
     >
       {/* Title section */}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          width: '100%',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          width: "100%",
           paddingTop: Math.round(180 * wScale),
           paddingLeft: theme.layout.framePadding,
           paddingRight: theme.layout.framePadding,
@@ -108,15 +144,15 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
       >
         {category && (
           <AnimatedText
-            delay={5}
+            delay={10}
             type="slide"
             style={{
               color: theme.colors.muted,
               fontFamily: theme.typography.label,
               fontSize: theme.typography.sizes.label,
               fontWeight: theme.typography.weights.bold,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
               marginBottom: theme.layout.gap.md,
             }}
           >
@@ -141,7 +177,7 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
 
         {subtitle && (
           <AnimatedText
-            delay={20}
+            delay={22}
             type="slide"
             style={{
               color: theme.colors.muted,
@@ -155,14 +191,13 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
           </AnimatedText>
         )}
       </div>
-
       {/* Media section */}
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
           marginTop: Math.round(90 * wScale),
         }}
       >
@@ -170,24 +205,24 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
           style={{
             opacity: mediaOpacity,
             transform: `scale(${mediaScale})`,
-            position: 'relative',
+            position: "relative",
             width: maxMediaWidth,
             minHeight: mediaMinHeight,
             maxHeight: mediaMaxHeight,
-            overflow: 'hidden',
+            overflow: "hidden",
             borderRadius: Math.round(12 * wScale),
           }}
         >
           {mediaError ? (
             <div
               style={{
-                width: '100%',
-                height: '100%',
+                width: "100%",
+                height: "100%",
                 backgroundColor: theme.colors.divider,
                 borderRadius: Math.round(12 * wScale),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               <span
@@ -200,13 +235,13 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
                 Media not found
               </span>
             </div>
-          ) : mediaType === 'video' ? (
+          ) : mediaType === "video" ? (
             <OffthreadVideo
               src={staticFile(mediaSrc)}
               style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
                 borderRadius: Math.round(12 * wScale),
               }}
               startFrom={videoStartFrom ?? 0}
@@ -216,25 +251,21 @@ export const TitleMediaScene: React.FC<TitleMediaSceneProps> = ({
             <Img
               src={staticFile(mediaSrc)}
               style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
+                width: "100%",
+                height: "auto",
+                display: "block",
                 borderRadius: Math.round(12 * wScale),
-                objectFit: 'contain',
+                objectFit: "contain",
+                scale: 1,
               }}
               onError={() => setMediaError(true)}
             />
           )}
 
-          <div style={cornerBracket('tl')} />
-          <div style={cornerBracket('tr')} />
-          <div style={cornerBracket('bl')} />
-          <div style={cornerBracket('br')} />
-
-          {mediaType === 'video' && !mediaError && (
+          {mediaType === "video" && !mediaError && (
             <div
               style={{
-                position: 'absolute',
+                position: "absolute",
                 bottom: 0,
                 left: 0,
                 right: 0,

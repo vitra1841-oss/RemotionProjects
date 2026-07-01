@@ -6,3 +6,4 @@ export * from './OutroScene';
 export * from './ListScene';
 export * from './TimelineScene';
 export * from './TitleMediaScene';
+export * from './TerminalCodeBlockScene';

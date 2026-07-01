@@ -2,7 +2,7 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 import { Theme, defaultTheme } from '../theme';
 
-interface CaptionWord {
+interface WordInfo {
   word: string;
   start: number;
   end: number;
@@ -12,13 +12,12 @@ interface CaptionChunk {
   text: string;
   start: number;
   end: number;
-  words: CaptionWord[];
+  words: WordInfo[];
 }
 
 interface CaptionRendererProps {
-  src: string; // staticFile path, e.g. staticFile('captions/m5.json')
+  src: string;
   theme?: Theme;
-  accentColor?: string;
   fontSize?: number;
   bottom?: number;
 }
@@ -26,7 +25,6 @@ interface CaptionRendererProps {
 export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
   src,
   theme = defaultTheme,
-  accentColor,
   fontSize,
   bottom,
 }) => {
@@ -34,7 +32,6 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
   const { fps, width } = useVideoConfig();
   const wScale = width / 1080;
   const currentTime = frame / fps;
-  const effectiveAccent = accentColor ?? theme.colors.primary;
   const effectiveFontSize = fontSize ?? Math.round(48 * wScale);
   const effectiveBottom = bottom ?? Math.round(250 * wScale);
 
@@ -42,21 +39,21 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
 
   React.useEffect(() => {
     fetch(src)
-        .then((r) => {
+      .then((r) => {
         if (!r.ok) return;
         return r.json();
-        })
-        .then((data) => {
+      })
+      .then((data) => {
         if (data) setCaptions(data);
-        })
-        .catch(() => {});
-    }, [src]);
+      })
+      .catch(() => {});
+  }, [src]);
 
   const activeChunk = captions.find(
     (chunk) => currentTime >= chunk.start && currentTime < chunk.end
   );
 
-  if (!activeChunk) return null;
+  if (!activeChunk || !activeChunk.words) return null;
 
   const fadeOpacity = Math.min((currentTime - activeChunk.start) / 0.1, 1);
 
@@ -74,13 +71,13 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
       >
         <div
           style={{
-            display: 'inline-flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'baseline',
-            gap: '0.8em',
-            wordSpacing: '0.1em',
-            maxWidth: '80%',
+            display: 'inline-block',
+            maxWidth: '100%',
+            textAlign: 'center',
+            fontFamily: theme.typography.body,
+            fontSize: effectiveFontSize,
+            lineHeight: 1.6,
+            color: theme.colors.text,
             borderRadius: Math.round(16 * wScale),
             paddingTop: Math.round(18 * wScale),
             paddingBottom: Math.round(18 * wScale),
@@ -89,24 +86,19 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({
           }}
         >
           {activeChunk.words.map((w, i) => {
-            const isActive = currentTime >= w.start && currentTime < w.end;
-
+            const isActive =
+              currentTime >= w.start && currentTime < w.end;
             return (
-              <span
-                key={i}
-                style={{
-                  fontFamily: theme.typography.body,
-                  fontSize: effectiveFontSize,
-                  fontWeight: isActive
-                    ? theme.typography.weights.bold
-                    : theme.typography.weights.normal,
-                  color: isActive ? effectiveAccent : theme.colors.text,
-                  lineHeight: 1.4,
-                  display: 'inline-block',
-                }}
-              >
-                {w.word}
-              </span>
+              <React.Fragment key={i}>
+                <span
+                  style={{
+                    color: isActive ? theme.colors.primary : 'inherit',
+                  }}
+                >
+                  {w.word}
+                </span>
+                {i < activeChunk.words.length - 1 ? ' ' : null}
+              </React.Fragment>
             );
           })}
         </div>
